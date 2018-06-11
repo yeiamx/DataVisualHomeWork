@@ -24,6 +24,7 @@ import requests
 from lxml import etree
 import os
 import pathlib
+from textprocesser import TextProcessor
 
 def test():
     cookies = get_cookie_from_network(accounts[0]['id'], accounts[0]['password'])
@@ -80,8 +81,15 @@ def test_file_path():
     #print(os.path.exists(weibo_comments_save_path))
     path = pathlib.Path(weibo_comments_save_path)
     print(path.exists())
+
+def test_processer():
+    processor = TextProcessor('./weibo_detail/2925163291.txt')
+    r = processor.process()
+    print(r)
+
 if __name__ == '__main__':
     #test_numric()
     #test_detail(test_for_cookies(), test_for_headers())
     #test_comment(test_for_cookies(), test_for_headers())
-    test_file_path()
+    #test_file_path()
+    test_processer()

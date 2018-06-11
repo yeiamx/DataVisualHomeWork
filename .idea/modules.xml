@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/DataVisualHomeWork.iml" filepath="$PROJECT_DIR$/.idea/DataVisualHomeWork.iml" />
+      <module fileurl="file://D:/PycharmProjects/textanaly/.idea/textanaly.iml" filepath="D:/PycharmProjects/textanaly/.idea/textanaly.iml" />
+      <module fileurl="file://$PROJECT_DIR$/TopicsVisualization/weibo_terminater/.idea/weibo_terminater.iml" filepath="$PROJECT_DIR$/TopicsVisualization/weibo_terminater/.idea/weibo_terminater.iml" />
+    </modules>
+  </component>
+</project>
