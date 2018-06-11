@@ -64,6 +64,7 @@ class WeiBoScraper(object):
         self.num_forwarding = []
         self.num_comment = []
         self.weibo_detail_urls = []
+        self.weibo_times = []
 
     def _init_cookies(self):
         try:
@@ -174,9 +175,9 @@ class WeiBoScraper(object):
                     info = selector2.xpath("//div[@class='c']")
                     print('---- current solving page {}'.format(page))
 
-                    if page % 10 == 0:
-                        print('[ATTEMPTING] rest for 5 minutes to cheat weibo site, avoid being banned.')
-                        time.sleep(60*5)
+                    if page % 10 == 0 & page!=0:
+                        print('[ATTEMPTING] rest for 15s to cheat weibo site, avoid being banned.')
+                        time.sleep(15)
 
                     if len(info) > 3:
                         for i in range(0, len(info) - 2):
@@ -221,18 +222,17 @@ class WeiBoScraper(object):
         :return:
         """
         weibo_comments_save_path = './weibo_detail/{}.txt'.format(self.user_id)
-        if not os.path.exists(weibo_comments_save_path):
+
+        try:
             os.makedirs(os.path.dirname(weibo_comments_save_path))
+        except IOError as e:
+            pass
+
         with open(weibo_comments_save_path, 'w+', encoding='utf-8') as f:
             for i, url in enumerate(self.weibo_detail_urls):
                 print('solving weibo detail from {}'.format(url))
                 html_detail = requests.get(url, cookies=self.cookie, headers=self.headers).content
                 selector_detail = etree.HTML(html_detail)
-
-                if (len(selector_detail.xpath('//*[@id="pagelist"]/form/div/input[1]/@value'))==0):
-                    continue
-                else:
-                    all_comment_pages = selector_detail.xpath('//*[@id="pagelist"]/form/div/input[1]/@value')[0]
 
                 print('\n这是 {} 的微博：'.format(self.user_name))
                 print('微博内容： {}'.format(self.weibo_content[i]))
@@ -243,32 +243,59 @@ class WeiBoScraper(object):
                 f.writelines('E\n')
                 f.writelines('F\n')
 
-                for page in range(int(all_comment_pages) - 2):
+                if (len(selector_detail.xpath('//*[@id="pagelist"]/form/div/input[1]/@value'))==0):
+                    f.writelines('F\n')
+                    continue
+                else:
+                    all_comment_pages = selector_detail.xpath('//*[@id="pagelist"]/form/div/input[1]/@value')[0]
 
-                    if page % 10 == 0:
-                        print('[ATTEMPTING] rest for 5 minutes to cheat weibo site, avoid being banned.')
-                        time.sleep(60*5)
+                for page in range(int(all_comment_pages)):
+
+                    if page % 10 == 0 & page!=0:
+                        print('[ATTEMPTING] rest for 15s to cheat weibo site, avoid being banned.')
+                        time.sleep(15)
 
                     # we crawl from page 2, cause front pages have some noise
-                    detail_comment_url = url + '&page=' + str(page + 2)
+                    # detail_comment_url = url + '&page=' + str(page + 2)
+
+                    # what if page 1
+                    detail_comment_url = url + '&page=' + str(page + 1)
                     try:
                         # from every detail comment url we will got all comment
                         html_detail_page = requests.get(detail_comment_url, cookies=self.cookie).content
                         selector_comment = etree.HTML(html_detail_page)
 
+                        comment_content_div_elements = selector_comment.xpath('//div[starts-with(@id, "C_")]/span[@class="ctt"]')
+                        comment_at_div_elements = selector_comment.xpath('//div[starts-with(@id, "C_")]/span[@class="ctt"]/a')
                         comment_div_element = selector_comment.xpath('//div[starts-with(@id, "C_")]')
+                        comment_time_div_elements = selector_comment.xpath('//div[starts-with(@id, "C_")]/span[@class="ct"]')
+                        AT_NUM = 0
 
-                        for child in comment_div_element:
-                            single_comment_user_name = child.xpath('a[1]/text()')[0]
-                            if child.xpath('span[1][count(*)=0]'):
-                                single_comment_content = child.xpath('span[1][count(*)=0]/text()')[0]
-                            else:
-                                span_element = child.xpath('span[1]')[0]
-                                at_user_name = span_element.xpath('a/text()')[0]
+                        for index in range(len(comment_content_div_elements)):
+                            single_comment_user_name = comment_div_element[index].xpath('a[1]/text()')[0]
+                            comment_content_list = comment_content_div_elements[index].xpath('text()')
+                            at_user_name=''
+                            comment_time = comment_time_div_elements[index].xpath('text()')[0][:19]
+                            if (len(comment_content_list)>1):
+                                at_user_name = comment_at_div_elements[AT_NUM].xpath('text()')[0]
                                 at_user_name = '$' + at_user_name.split('@')[-1] + '$'
-                                single_comment_content = span_element.xpath('/text()')
-                                single_comment_content.insert(1, at_user_name)
-                                single_comment_content = ' '.join(single_comment_content)
+                                comment_content = comment_content_list[1]
+                                AT_NUM+=1
+                            else :
+                                comment_content = comment_content_list[0]
+
+                            single_comment_content = at_user_name + ' ' + comment_content + ' at ' + comment_time
+
+
+                            # if child.xpath('span[1][count(*)=0]'):
+                            #     single_comment_content = child.xpath('span[1][count(*)=0]/text()')[0]
+                            # else:
+                            #     span_element = child.xpath('span[1]')[0]
+                            #     at_user_name = span_element.xpath('a/text()')[0]
+                            #     at_user_name = '$' + at_user_name.split('@')[-1] + '$'
+                            #     single_comment_content = span_element.xpath('/text()')
+                            #     single_comment_content.insert(1, at_user_name)
+                            #     single_comment_content = ' '.join(single_comment_content)
 
                             full_single_comment = '<' + single_comment_user_name + '>' + ': ' + single_comment_content
                             print(full_single_comment)
