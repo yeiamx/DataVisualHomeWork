@@ -67,15 +67,15 @@ def test_detail(cookie, headers):
     print(selector_detail.xpath('//*[@id="pagelist"]/form/div/input[1]/@value')[0])
 
 def test_comment(cookie, headers):
-    url = 'https://weibo.cn/comment/Gag4y9t8H?uid=2925163291&rl=0&page=1'
+    url = 'http://weibo.cn/comment/GkirBsdT0?uid=6345246509&rl=0'
     html_detail = requests.get(url, cookies=cookie, headers=headers).content
     selector_comment = etree.HTML(html_detail)
     comment_div_elements = selector_comment.xpath('//div[starts-with(@id, "C_")]/span[@class="ctt"]')
     comment_at_div_elements = selector_comment.xpath('//div[starts-with(@id, "C_")]/span[@class="ctt"]/a')
-    # for comment_div_element in comment_div_elements:
-    #     print(comment_div_element.xpath('text()'))
-    for comment_at_element in comment_at_div_elements:
-         print(comment_at_element.xpath('text()'))
+    for comment_div_element in comment_div_elements:
+        print(comment_div_element.xpath('text()'))
+    #for comment_at_element in comment_at_div_elements:
+    #    print(comment_at_element.xpath('text()'))
 
 def test_file_path():
     weibo_comments_save_path = '/weibo_detail/{}.txt'.format('2925163291')
@@ -90,16 +90,16 @@ def test_getname():
     print(names2)
 
 def test_processer():
-    processor = TextProcessor('./weibo_detail/2925163291.txt')
-    #processor.process()
-   # print(r)
+    processor = TextProcessor()
+    #processor.process('./weibo_detail/2925163291.txt')
+    #print(r)
     if processor.judge_weibo('pick宣仪'):
         print('yes')
 
 if __name__ == '__main__':
     #test_numric()
     #test_detail(test_for_cookies(), test_for_headers())
-    #test_comment(test_for_cookies(), test_for_headers())
+    test_comment(test_for_cookies(), test_for_headers())
     #test_file_path()
-    test_processer()
+    #test_processer()
     #test_getname()

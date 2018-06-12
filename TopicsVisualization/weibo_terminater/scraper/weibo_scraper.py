@@ -28,6 +28,7 @@ if you care about security, using subsidiary accounts instead.
 
 """
 import re
+import random
 import sys
 import os
 import requests
@@ -38,6 +39,7 @@ from settings.config import COOKIES_SAVE_PATH
 import pickle
 import time
 from utils.sstring import is_number
+from textprocesser import  *
 
 
 class WeiBoScraper(object):
@@ -52,6 +54,7 @@ class WeiBoScraper(object):
         self._init_cookies()
         self._init_headers()
 
+        self.textprocesser = TextProcessor()
         self.user_id = uuid
         self.filter = filter_flag
         self.user_name = ''
@@ -65,6 +68,7 @@ class WeiBoScraper(object):
         self.num_comment = []
         self.weibo_detail_urls = []
         self.weibo_times = []
+        self.MAX_PAGE_NUM = 5
 
     def _init_cookies(self):
         try:
@@ -105,7 +109,7 @@ class WeiBoScraper(object):
             return True
         except Exception as e:
             print(e)
-            print('current account being banned, return to dispatch center, resign for new account..')
+            print('something wrong during crawling. May current account being banned, return to dispatch center, resign for new account..')
             return False
 
     def _get_html(self):
@@ -168,6 +172,7 @@ class WeiBoScraper(object):
             try:
                 # traverse all weibo, and we will got weibo detail urls
                 # TODO: inside for loop must set sleep avoid banned by official.
+                page_num = (page_num if (page_num<self.MAX_PAGE_NUM) else self.MAX_PAGE_NUM)
                 for page in range(1, page_num):
                     url2 = 'http://weibo.cn/%s?filter=%s&page=%s' % (self.user_id, self.filter, page)
                     html2 = requests.get(url2, cookies=self.cookie, headers=self.headers).content
@@ -181,15 +186,19 @@ class WeiBoScraper(object):
 
                     if len(info) > 3:
                         for i in range(0, len(info) - 2):
+                            str_t = info[i].xpath("div/span[@class='ctt']")
+                            weibos = str_t[0].xpath('string(.)')
+                            #print(weibos)
+                            if (self.textprocesser.judge_weibo(weibos)):
+                                self.weibo_scraped += 1
+                                self.weibo_content.append(weibos)
+                            else:
+                                #print('DONT RELATED TO 101, SO PASS.')
+                                continue
+
                             detail = info[i].xpath("@id")[0]
                             self.weibo_detail_urls.append('http://weibo.cn/comment/{}?uid={}&rl=0'.
                                                           format(detail.split('_')[-1], self.user_id))
-
-                            self.weibo_scraped += 1
-                            str_t = info[i].xpath("div/span[@class='ctt']")
-                            weibos = str_t[0].xpath('string(.)')
-                            self.weibo_content.append(weibos)
-                            print(weibos)
 
                             str_zan = info[i].xpath("div/a/text()")[-4]
                             guid = re.findall(pattern, str_zan, re.M)
@@ -208,8 +217,7 @@ class WeiBoScraper(object):
             except etree.XMLSyntaxError as e:
                 print('get weibo info finished.')
             if self.filter == 0:
-                print('共' + str(self.weibo_scraped) + '条微博')
-
+                print('共' + str(self.weibo_scraped) + '条101微博')
             else:
                 print('共' + str(self.weibo_num) + '条微博，其中' + str(self.weibo_scraped) + '条为原创微博')
         except IndexError as e:
@@ -230,13 +238,13 @@ class WeiBoScraper(object):
 
         with open(weibo_comments_save_path, 'w+', encoding='utf-8') as f:
             for i, url in enumerate(self.weibo_detail_urls):
-                print('solving weibo detail from {}'.format(url))
+                print('solving weibo detail from {} '.format(url)+str(i)+'/'+str(len(self.weibo_detail_urls)))
                 html_detail = requests.get(url, cookies=self.cookie, headers=self.headers).content
                 selector_detail = etree.HTML(html_detail)
 
-                print('\n这是 {} 的微博：'.format(self.user_name))
-                print('微博内容： {}'.format(self.weibo_content[i]))
-                print('接下来是下面的评论：\n\n')
+                #print('\n这是 {} 的微博：'.format(self.user_name))
+                #print('微博内容： {}'.format(self.weibo_content[i]))
+                #print('接下来是下面的评论：\n\n')
                 # write weibo content
                 f.writelines('E\n')
                 f.writelines(self.weibo_content[i] + '\n')
@@ -249,11 +257,15 @@ class WeiBoScraper(object):
                 else:
                     all_comment_pages = selector_detail.xpath('//*[@id="pagelist"]/form/div/input[1]/@value')[0]
 
+                COMMENTS_NUM = 0
                 for page in range(int(all_comment_pages)):
 
-                    if page % 10 == 0 & page!=0:
-                        print('[ATTEMPTING] rest for 15s to cheat weibo site, avoid being banned.')
-                        time.sleep(15)
+                    # if page % 5 == 0 & page!=0:
+                    #     print('[ATTEMPTING] rest for 15s to cheat weibo site, avoid being banned.')
+                    #     time.sleep(5)
+                    # if COMMENTS_NUM >=100:
+                    #     print('[ATTEMPTING] rest for 15s to cheat weibo site, avoid being banned.')
+                    #     time.sleep(5)
 
                     # we crawl from page 2, cause front pages have some noise
                     # detail_comment_url = url + '&page=' + str(page + 2)
@@ -270,8 +282,10 @@ class WeiBoScraper(object):
                         comment_div_element = selector_comment.xpath('//div[starts-with(@id, "C_")]')
                         comment_time_div_elements = selector_comment.xpath('//div[starts-with(@id, "C_")]/span[@class="ct"]')
                         AT_NUM = 0
+                        #print('content_len:'+str(len(comment_content_div_elements))+' at_len'+str(len(comment_at_div_elements))+' time_len'+str(len(comment_time_div_elements)))
 
                         for index in range(len(comment_content_div_elements)):
+                            COMMENTS_NUM+=1
                             single_comment_user_name = comment_div_element[index].xpath('a[1]/text()')[0]
                             comment_content_list = comment_content_div_elements[index].xpath('text()')
                             at_user_name=''
@@ -281,9 +295,10 @@ class WeiBoScraper(object):
                                 at_user_name = '$' + at_user_name.split('@')[-1] + '$'
                                 comment_content = comment_content_list[1]
                                 AT_NUM+=1
-                            else :
+                            elif (len(comment_content_list)==1):
                                 comment_content = comment_content_list[0]
-
+                            else:
+                                continue
                             single_comment_content = at_user_name + ' ' + comment_content + ' at ' + comment_time
 
 
@@ -298,13 +313,18 @@ class WeiBoScraper(object):
                             #     single_comment_content = ' '.join(single_comment_content)
 
                             full_single_comment = '<' + single_comment_user_name + '>' + ': ' + single_comment_content
-                            print(full_single_comment)
+                            #print(full_single_comment)
                             f.writelines(full_single_comment + '\n')
                     except etree.XMLSyntaxError as e:
                         print('-*20')
                         print('user id {} all done!'.format(self.user_id))
                         print('all weibo content and comments saved into {}'.format(weibo_comments_save_path))
                 f.writelines('F\n')
+
+                sleepTime = random.randint(0, 10)
+                print('[ATTEMPTING] rest for '+str(sleepTime)+'s to cheat weibo site, avoid being banned.')
+                time.sleep(sleepTime)
+
 
     def switch_account(self, new_account):
         assert new_account.isinstance(str), 'account must be string'

@@ -6,8 +6,7 @@ import json
 
 class TextProcessor:
 
-    def __init__(self, path):
-        self.path = path
+    def __init__(self):
         self.SLEEP_TIME = 0.1
         self.OUTPUT_FILE_NAME = 'data.json'
         self.KEY_WORDS =[
@@ -26,8 +25,8 @@ class TextProcessor:
             '山支', '美岐', '宣仪', '小七', '菊姐'
         ]
 
-    def process(self):
-        with open(self.path, 'r', encoding='utf-8') as f:
+    def process(self, path):
+        with open(path, 'r', encoding='utf-8') as f:
             s = f.read()
             s = ''.join(s.split())
             #print(s)
