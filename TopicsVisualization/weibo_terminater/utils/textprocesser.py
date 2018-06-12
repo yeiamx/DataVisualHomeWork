@@ -6,7 +6,7 @@ class TextProcessor:
 
     def __init__(self, path):
         self.path = path
-        self.SLEEP_TIME = 0.25
+        self.SLEEP_TIME = 0.1
     def process(self):
         with open(self.path, 'r', encoding='utf-8') as f:
             s = f.read()
@@ -44,9 +44,14 @@ class TextProcessor:
             for i in range(len(result)):
                 text = result[i]['content']
                 analyresult = client.sentimentClassify(text)
+                while 'error_msg' in analyresult:
+                    time.sleep(self.SLEEP_TIME)
+                    analyresult = client.sentimentClassify(text)
+                print(analyresult)
                 result[i]['positive_prob'] = analyresult['items'][0]['positive_prob']
                 result[i]['sentiment'] = analyresult['items'][0]['sentiment']
-                time.sleep(self.SLEEP_TIME)
+               # time.sleep(self.SLEEP_TIME)
+
 
             return(result)
 
