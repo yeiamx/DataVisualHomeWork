@@ -25,6 +25,7 @@ from lxml import etree
 import os
 import pathlib
 from textprocesser import TextProcessor
+from getgirlsname import GetName
 
 def test():
     cookies = get_cookie_from_network(accounts[0]['id'], accounts[0]['password'])
@@ -82,10 +83,18 @@ def test_file_path():
     path = pathlib.Path(weibo_comments_save_path)
     print(path.exists())
 
+def test_getname():
+    g = GetName()
+    names1, names2 = g.get_name()
+    print(names1)
+    print(names2)
+
 def test_processer():
     processor = TextProcessor('./weibo_detail/2925163291.txt')
-    r = processor.process()
-    print(r)
+    #processor.process()
+   # print(r)
+    if processor.judge_weibo('pick宣仪'):
+        print('yes')
 
 if __name__ == '__main__':
     #test_numric()
@@ -93,3 +102,4 @@ if __name__ == '__main__':
     #test_comment(test_for_cookies(), test_for_headers())
     #test_file_path()
     test_processer()
+    #test_getname()
