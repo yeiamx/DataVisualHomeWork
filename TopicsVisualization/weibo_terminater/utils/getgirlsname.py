@@ -30,8 +30,12 @@ class GetName:
         for name in b:
             names2.append(name.text)
 
-        # with open(self.PATH, 'w') as f:
-        #     f.write(names1)
+        with open(self.PATH, 'a', encoding='utf-8') as f:
+            for name in names1:
+                f.write(name + '\n')
+            for name in names2:
+                f.write(name + '\n')
+
 
         return names1, names2
 
