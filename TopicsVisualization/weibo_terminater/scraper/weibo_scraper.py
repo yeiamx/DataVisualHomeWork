@@ -68,7 +68,7 @@ class WeiBoScraper(object):
         self.num_comment = []
         self.weibo_detail_urls = []
         self.weibo_times = []
-        self.MAX_PAGE_NUM = 10
+        self.MAX_PAGE_NUM = 2
         self.SLEEP_COMMENT_TIME = 500
 
     def _init_cookies(self):

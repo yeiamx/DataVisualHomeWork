@@ -27,6 +27,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description='WeiBo Terminator.')
 
     help_ = 'set user id. or if_file contains multi ids.'
+
     parser.add_argument('-i', '--id', default=DEFAULT_USER_ID, help=help_)
 
     help_ = 'set weibo filter flag. if filter is 0, then weibo are all original,' \

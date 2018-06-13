@@ -26,7 +26,9 @@ import os
 import pathlib
 from textprocesser import TextProcessor
 from getgirlsname import GetName
+import json
 
+processor = TextProcessor()
 def test():
     cookies = get_cookie_from_network(accounts[0]['id'], accounts[0]['password'])
     print(cookies)
@@ -90,16 +92,26 @@ def test_getname():
     print(names2)
 
 def test_processer():
-    processor = TextProcessor()
-    #processor.process('./weibo_detail/2925163291.txt')
+    processor.process('./weibo_detail/5596094365.txt')
     #print(r)
-    if processor.judge_weibo('pick宣仪'):
-        print('yes')
+    # if processor.judge_weibo('pick宣仪'):
+    #     print('yes')
+    #print(len(processor.KEY_WORDS))
 
+def test_judge():
+    print(processor.judge_type('#sing赖美云# [浮云] #创造101赖美云# 这里是小七@创造101-SING赖美云  的应援会，以后的日子也请一起走吧！下面是一些重要的链接[下]创'))
+
+def test_read():
+    with open('data.json', 'r') as f:
+        t = json.load(f)
+
+        print(t)
 if __name__ == '__main__':
     #test_numric()
     #test_detail(test_for_cookies(), test_for_headers())
-    test_comment(test_for_cookies(), test_for_headers())
+    #test_comment(test_for_cookies(), test_for_headers())
     #test_file_path()
     #test_processer()
     #test_getname()
+    #test_judge()
+    test_read()
