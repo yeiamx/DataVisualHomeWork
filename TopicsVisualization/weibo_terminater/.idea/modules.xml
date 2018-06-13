@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://E:/PYTHON/Python Project/TEMP/.idea/TEMP.iml" filepath="E:/PYTHON/Python Project/TEMP/.idea/TEMP.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/weibo_terminater.iml" filepath="$PROJECT_DIR$/.idea/weibo_terminater.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../weibo_terminator_workflow-master/.idea/weibo_terminator_workflow-master.iml" filepath="$PROJECT_DIR$/../weibo_terminator_workflow-master/.idea/weibo_terminator_workflow-master.iml" />
     </modules>
   </component>
 </project>

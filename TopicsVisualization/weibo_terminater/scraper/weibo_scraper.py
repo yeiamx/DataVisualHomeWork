@@ -69,6 +69,7 @@ class WeiBoScraper(object):
         self.weibo_detail_urls = []
         self.weibo_times = []
         self.MAX_PAGE_NUM = 10
+        self.SLEEP_COMMENT_TIME = 500
 
     def _init_cookies(self):
         try:
@@ -264,13 +265,11 @@ class WeiBoScraper(object):
 
                 COMMENTS_NUM = 0
                 for page in range(int(all_comment_pages)):
-
-                    # if page % 5 == 0 & page!=0:
-                    #     print('[ATTEMPTING] rest for 15s to cheat weibo site, avoid being banned.')
-                    #     time.sleep(5)
-                    # if COMMENTS_NUM >=100:
-                    #     print('[ATTEMPTING] rest for 15s to cheat weibo site, avoid being banned.')
-                    #     time.sleep(5)
+                    print('page:'+str(page)+'/'+all_comment_pages)
+                    if page % 20 == 0 & page!=0:
+                        sleepTime = random.randint(0, 10)
+                        print('[ATTEMPTING] rest for '+str(sleepTime)+'s to cheat weibo site, avoid being banned.')
+                        time.sleep(sleepTime)
 
                     # we crawl from page 2, cause front pages have some noise
                     # detail_comment_url = url + '&page=' + str(page + 2)
@@ -291,6 +290,11 @@ class WeiBoScraper(object):
 
                         for index in range(len(comment_content_div_elements)):
                             COMMENTS_NUM+=1
+                            if COMMENTS_NUM >=self.SLEEP_COMMENT_TIME:
+                                sleepTime = random.randint(0, 10)
+                                print('[ATTEMPTING] rest for '+str(sleepTime)+'s to cheat weibo site, avoid being banned.')
+                                time.sleep(sleepTime)
+
                             single_comment_user_name = comment_div_element[index].xpath('a[1]/text()')[0]
                             comment_content_list = comment_content_div_elements[index].xpath('text()')
                             at_user_name=''
