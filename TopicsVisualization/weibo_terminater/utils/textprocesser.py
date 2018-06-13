@@ -3,11 +3,12 @@ from aip import AipNlp
 import time
 import json
 import datetime
-
+import os
 
 class TextProcessor:
 
     def __init__(self):
+        self.OBSERVE_NUM = 22
         self.SLEEP_TIME = 0.25
         self.NICKNAME_DICT = {
             '山支': '孟美岐', '美岐': '孟美岐', '宣仪': '吴宣仪', '五选一': '吴宣仪', '小七': '赖美云',
@@ -44,12 +45,28 @@ class TextProcessor:
     ##into process1_...的父文件夹
     def process2(self, path):
         dateResult = {}
+        filenames=os.listdir(path)
+        for filename in filenames:
+            if (filename.split('.')[-1]=='json'):
+                print('processing '+filename.split('.')[0]+' ...')
+                with open(path+'/'+filename, 'r') as f:
+                    jsonData = json.load(f)
+                process1List = jsonData['result']
+                for process1Data in process1List:
+                    if dateResult.__contains__(process1Data['date']):
+                        if self.KEY_WORDS.index(process1Data['type'])-2 <= 21:
+                            dateResult[process1Data['date']][self.KEY_WORDS.index(process1Data['type'])-2]['mentioned']+=1
+                            dateResult[process1Data['date']][self.KEY_WORDS.index(process1Data['type'])-2]['power']+=process1Data['positive_prob']*process1Data['sentiment']
+                    else:
+                        dateResult[process1Data['date']] = []
+                        for i in range(self.OBSERVE_NUM):
+                            dateResult[process1Data['date']].append({})
+                            dateResult[process1Data['date']][i]['name'] = self.KEY_WORDS[i+2]
+                            dateResult[process1Data['date']][i]['mentioned'] = 0
+                            dateResult[process1Data['date']][i]['power'] = 0
 
-        with open(path, 'r') as f:
-            dataOri = json.load(f)
-        dataResults = dataOri['result']
-        for dataResult in dataResults:
-            name = dataResult['type']
+        with open('./weibo_detail/finalResult.json', 'w', encoding='utf-8') as f:
+            json.dump(dateResult, f)
 
     def process(self, path, path_to_save):
         with open(path, 'r', encoding='utf-8') as f:
