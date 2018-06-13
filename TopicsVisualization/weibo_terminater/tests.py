@@ -92,7 +92,7 @@ def test_getname():
     print(names2)
 
 def test_processer():
-    processor.process('./weibo_detail/5596094365.txt')
+    processor.process('./weibo_detail/5596094365.txt', './weibo_detail/process1_5596094365.json')
     #print(r)
     # if processor.judge_weibo('pick宣仪'):
     #     print('yes')
@@ -102,7 +102,7 @@ def test_judge():
     print(processor.judge_type('#sing赖美云# [浮云] #创造101赖美云# 这里是小七@创造101-SING赖美云  的应援会，以后的日子也请一起走吧！下面是一些重要的链接[下]创'))
 
 def test_read():
-    with open('data.json', 'r') as f:
+    with open('./weibo_detail/process1_5596094365.json', 'r') as f:
         t = json.load(f)
 
         print(t)

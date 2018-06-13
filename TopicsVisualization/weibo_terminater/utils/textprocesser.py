@@ -9,7 +9,6 @@ class TextProcessor:
 
     def __init__(self):
         self.SLEEP_TIME = 0.25
-        self.OUTPUT_FILE_NAME = 'data.json'
         self.NICKNAME_DICT = {
             '山支': '孟美岐', '美岐': '孟美岐', '宣仪': '吴宣仪', '五选一': '吴宣仪', '小七': '赖美云',
             '菊姐': '王菊', 'sunnee': '杨芸晴', '村花': '杨超越'
@@ -43,13 +42,13 @@ class TextProcessor:
         else:
             return 'throw'
 
-    def process(self, path):
+    def process(self, path, path_to_save):
         with open(path, 'r', encoding='utf-8') as f:
             s = f.read()
             s = ''.join(s.split())
             #print(s)
-            E = re.findall(r'E(.*?)E', s)
-            F = re.findall(r'F(.*?)F', s)
+            E = re.findall(r'EEE(.*?)EEE', s)
+            F = re.findall(r'FFF(.*?)FFF', s)
             #print(E)
             #print(F)
             result = []
@@ -73,6 +72,8 @@ class TextProcessor:
                             a['type'] = weibo_type
                         else:
                             a['type'] = self.judge_type(a['content'])
+                            if (a['type']=='throw' or a['type']=='all'):
+                                continue
 
                         if '月' in a['date']:
                             a['date'] = a['date'][0:2] + a['date'][3:5]
@@ -108,6 +109,9 @@ class TextProcessor:
                         finalResultObj = {}
                         finalResultObj['positive_prob'] = analyresult['items'][0]['positive_prob']
                         finalResultObj['sentiment'] = analyresult['items'][0]['sentiment']
+                        finalResultObj['date'] = result[i]['date']
+                        finalResultObj['content'] = result[i]['content']
+                        finalResultObj['type'] = result[i]['type']
                         finalResult.append(finalResultObj)
                     except:
                         pass
@@ -117,8 +121,8 @@ class TextProcessor:
                     #time.sleep(self.SLEEP_TIME)
 
             output = {}
-            output['result'] = result
-            with open(self.OUTPUT_FILE_NAME, 'w', encoding='utf-8') as f:
+            output['result'] = finalResult
+            with open(path_to_save, 'w', encoding='utf-8') as f:
                 json.dump(output, f)
             # with open(self.OUTPUT_FILE_NAME, 'r') as f:
             #     t = json.load(f)
@@ -147,12 +151,4 @@ class TextProcessor:
 # E = re.findall(r'E.*?E', b)
 # print(E)
 
-#调用情感分析api
-""" 你的 APPID AK SK """
-APP_ID = '11377051'
-API_KEY = 'DPHGf2kvWedTVhMYZA3YAoQL'
-SECRET_KEY = 'Xg8vhEBOlOLbdYWsvPue6uh5AT6XBYxP '
-client = AipNlp(APP_ID, API_KEY, SECRET_KEY)
-text = '打卡，填了'
-analyresult = client.sentimentClassify(text)
-print(analyresult)
+
