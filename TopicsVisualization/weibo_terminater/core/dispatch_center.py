@@ -105,8 +105,33 @@ class Dispatcher(object):
                     scraper.switch_account(self.all_accounts[i])
                     print('account {} being banned or error weibo is none for current user id, switch to {}..'.format(
                         self.all_accounts[i - 1], self.all_accounts[i]))
+                    i = i + 1
 
     def _init_multi_mode(self):
-        pass
+        user_ids = []
+        with open(self.id_file_path, 'r') as f:
+            for line in f:
+                print(line.split('\n'))
+                user_ids.append(line.split('\n')[0])
+
+        for user_id in user_ids:
+            scraper = WeiBoScraper(using_account=self.all_accounts[0], uuid=user_id, filter_flag=self.filter_flag)
+            i = 1
+            while True:
+                result = scraper.crawl()
+                if result:
+                    print('finished!!!')
+                    break
+                else:
+                    if i >= len(self.all_accounts):
+                        print('scrap not finish, account resource run out. update account move on scrap.')
+                        break
+                    else:
+                        scraper.switch_account(self.all_accounts[i])
+                        print(
+                            'account {} being banned or error weibo is none for current user id, switch to {}..'.format(
+                                self.all_accounts[i - 1], self.all_accounts[i]))
+                        i = i + 1
+
 
 

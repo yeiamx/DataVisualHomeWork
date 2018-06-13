@@ -121,6 +121,7 @@ class WeiBoScraper(object):
                 url = 'http://weibo.cn/%s?filter=%s&page=1' % (self.user_id, self.filter)
                 print(url)
             self.html = requests.get(url, cookies=self.cookie, headers=self.headers).content
+            #print(self.html)
             print('success load html..')
         except Exception as e:
             print(e)
@@ -129,8 +130,12 @@ class WeiBoScraper(object):
         print('-- getting user name')
         try:
             selector = etree.HTML(self.html)
-            self.user_name = selector.xpath('//table//div[@class="ut"]/span[1]/text()')[0]
-            print('current user name is: {}'.format(self.user_name))
+            print(selector.xpath('//table//div[@class="ut"]/span[1]/text()'))
+            if len(selector.xpath('//table//div[@class="ut"]/span[1]/text()')) == 0:
+                self.user_name = 'default'
+            else:
+                self.user_name = selector.xpath('//table//div[@class="ut"]/span[1]/text()')[0]
+                print('current user name is: {}'.format(self.user_name))
         except Exception as e:
             print(e)
             print('html not properly loaded, maybe cookies out of date or account being banned. '
