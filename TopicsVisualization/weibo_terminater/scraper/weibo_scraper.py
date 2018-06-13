@@ -68,7 +68,7 @@ class WeiBoScraper(object):
         self.num_comment = []
         self.weibo_detail_urls = []
         self.weibo_times = []
-        self.MAX_PAGE_NUM = 5
+        self.MAX_PAGE_NUM = 10
 
     def _init_cookies(self):
         try:
@@ -325,7 +325,6 @@ class WeiBoScraper(object):
                 print('[ATTEMPTING] rest for '+str(sleepTime)+'s to cheat weibo site, avoid being banned.')
                 time.sleep(sleepTime)
 
-
     def switch_account(self, new_account):
         assert new_account.isinstance(str), 'account must be string'
         self.using_account = new_account
@@ -355,21 +354,21 @@ class WeiBoScraper(object):
             traceback.print_exc()
 
 
-def main():
-    user_id = 1669879400
-    filter_flag = 1
-    wb = WeiBoScraper(user_id, filter_flag)
-    wb.crawl()
-    print('用户名：', wb.user_name)
-    print('全部微博数：', str(wb.weibo_num))
-    print('关注数：', str(wb.following))
-    print('粉丝数：', str(wb.followers))
-    print('最新一条微博为：', wb.weibo_content[0])
-    print('最新一条微博获得的点赞数：', wb.num_zan[0])
-    print('最新一条微博获得的转发数：', str(wb.num_forwarding[0]))
-    print('最新一条微博获得的评论数：', str(wb.num_comment[0]))
-    wb.write_text()
-
-
-if __name__ == '__main__':
-    main()
+# def main():
+#     user_id = 1669879400
+#     filter_flag = 1
+#     wb = WeiBoScraper(user_id, filter_flag)
+#     wb.crawl()
+#     print('用户名：', wb.user_name)
+#     print('全部微博数：', str(wb.weibo_num))
+#     print('关注数：', str(wb.following))
+#     print('粉丝数：', str(wb.followers))
+#     print('最新一条微博为：', wb.weibo_content[0])
+#     print('最新一条微博获得的点赞数：', wb.num_zan[0])
+#     print('最新一条微博获得的转发数：', str(wb.num_forwarding[0]))
+#     print('最新一条微博获得的评论数：', str(wb.num_comment[0]))
+#     wb.write_text()
+#
+#
+# if __name__ == '__main__':
+#     main()

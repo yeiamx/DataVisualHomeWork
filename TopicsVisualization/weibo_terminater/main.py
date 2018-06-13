@@ -34,7 +34,7 @@ def parse_args():
     parser.add_argument('-f', '--filter', default='1', help=help_)
 
     help_ = 'debug mode for develop. set 1 on, set 0 off.'
-    parser.add_argument('-d', '--debug', default='1', help=help_)
+    parser.add_argument('-d', '--debug', default='0', help=help_)
 
     args_ = parser.parse_args()
     return args_
