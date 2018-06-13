@@ -12,7 +12,6 @@ class TextProcessor:
         self.NICKNAME_DICT = {
             '山支': '孟美岐', '美岐': '孟美岐', '宣仪': '吴宣仪', '五选一': '吴宣仪', '小七': '赖美云',
             '菊姐': '王菊', 'sunnee': '杨芸晴', '村花': '杨超越'
-
         }
         self.KEY_WORDS =[
             '创造101', '101', '陈意涵', '段奥娟', '傅菁', '高秋梓', '高颖浠', '赖美云',
@@ -41,6 +40,16 @@ class TextProcessor:
             return 'all'
         else:
             return 'throw'
+
+    ##into process1_...的父文件夹
+    def process2(self, path):
+        dateResult = {}
+
+        with open(path, 'r') as f:
+            dataOri = json.load(f)
+        dataResults = dataOri['result']
+        for dataResult in dataResults:
+            name = dataResult['type']
 
     def process(self, path, path_to_save):
         with open(path, 'r', encoding='utf-8') as f:
