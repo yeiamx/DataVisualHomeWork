@@ -252,13 +252,13 @@ class WeiBoScraper(object):
                 #print('微博内容： {}'.format(self.weibo_content[i]))
                 #print('接下来是下面的评论：\n\n')
                 # write weibo content
-                f.writelines('E\n')
+                f.writelines('EEE\n')
                 f.writelines(self.weibo_content[i] + '\n')
-                f.writelines('E\n')
-                f.writelines('F\n')
+                f.writelines('EEE\n')
+                f.writelines('FFF\n')
 
                 if (len(selector_detail.xpath('//*[@id="pagelist"]/form/div/input[1]/@value'))==0):
-                    f.writelines('F\n')
+                    f.writelines('FFF\n')
                     continue
                 else:
                     all_comment_pages = selector_detail.xpath('//*[@id="pagelist"]/form/div/input[1]/@value')[0]
@@ -328,7 +328,7 @@ class WeiBoScraper(object):
                         print('-*20')
                         print('user id {} all done!'.format(self.user_id))
                         print('all weibo content and comments saved into {}'.format(weibo_comments_save_path))
-                f.writelines('F\n')
+                f.writelines('FFF\n')
 
                 sleepTime = random.randint(0, 10)
                 print('[ATTEMPTING] rest for '+str(sleepTime)+'s to cheat weibo site, avoid being banned.')
