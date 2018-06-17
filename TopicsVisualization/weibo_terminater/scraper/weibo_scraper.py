@@ -70,7 +70,8 @@ class WeiBoScraper(object):
         self.weibo_times = []
         self.MAX_PAGE_NUM = 20
         self.SLEEP_COMMENT_TIME = 100
-        self.PAGE_SLEEP_NUM = 5
+        self.COMMENT_PAGE_SLEEP_NUM = 5
+        self.MAX_COMMENT_PAGE_NUM = 200
 
     def _init_cookies(self):
         try:
@@ -267,7 +268,9 @@ class WeiBoScraper(object):
                 COMMENTS_SLEEP_NUM = 0
                 for page in range(int(all_comment_pages)):
                     print('page:'+str(page)+'/'+all_comment_pages)
-                    if page % self.PAGE_SLEEP_NUM == 0 & page!=0:
+                    if page>self.MAX_COMMENT_PAGE_NUM:
+                        break
+                    if page % self.COMMENT_PAGE_SLEEP_NUM == 0 & page!=0:
                         sleepTime = random.randint(0, 10)
                         print('[ATTEMPTING] rest for '+str(sleepTime)+'s to cheat weibo site, avoid being banned.')
                         time.sleep(sleepTime)
