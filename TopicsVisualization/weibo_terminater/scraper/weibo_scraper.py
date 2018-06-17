@@ -68,8 +68,9 @@ class WeiBoScraper(object):
         self.num_comment = []
         self.weibo_detail_urls = []
         self.weibo_times = []
-        self.MAX_PAGE_NUM = 2
-        self.SLEEP_COMMENT_TIME = 500
+        self.MAX_PAGE_NUM = 20
+        self.SLEEP_COMMENT_TIME = 100
+        self.PAGE_SLEEP_NUM = 5
 
     def _init_cookies(self):
         try:
@@ -263,10 +264,10 @@ class WeiBoScraper(object):
                 else:
                     all_comment_pages = selector_detail.xpath('//*[@id="pagelist"]/form/div/input[1]/@value')[0]
 
-                COMMENTS_NUM = 0
+                COMMENTS_SLEEP_NUM = 0
                 for page in range(int(all_comment_pages)):
                     print('page:'+str(page)+'/'+all_comment_pages)
-                    if page % 20 == 0 & page!=0:
+                    if page % self.PAGE_SLEEP_NUM == 0 & page!=0:
                         sleepTime = random.randint(0, 10)
                         print('[ATTEMPTING] rest for '+str(sleepTime)+'s to cheat weibo site, avoid being banned.')
                         time.sleep(sleepTime)
@@ -289,11 +290,12 @@ class WeiBoScraper(object):
                         #print('content_len:'+str(len(comment_content_div_elements))+' at_len'+str(len(comment_at_div_elements))+' time_len'+str(len(comment_time_div_elements)))
 
                         for index in range(len(comment_content_div_elements)):
-                            COMMENTS_NUM+=1
-                            if COMMENTS_NUM >=self.SLEEP_COMMENT_TIME:
+                            COMMENTS_SLEEP_NUM+=1
+                            if COMMENTS_SLEEP_NUM >=self.SLEEP_COMMENT_TIME:
                                 sleepTime = random.randint(0, 10)
                                 print('[ATTEMPTING] rest for '+str(sleepTime)+'s to cheat weibo site, avoid being banned.')
                                 time.sleep(sleepTime)
+                                COMMENTS_SLEEP_NUM = 0
 
                             single_comment_user_name = comment_div_element[index].xpath('a[1]/text()')[0]
                             comment_content_list = comment_content_div_elements[index].xpath('text()')
