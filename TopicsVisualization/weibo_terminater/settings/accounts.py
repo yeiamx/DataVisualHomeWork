@@ -26,7 +26,7 @@ until all accounts were banned, scrap stop.
 # please set this to your own, this is fake accounts
 accounts = [
     {
-        "id": '925166340@qq.com',
+        "id": 'yeiamx@sina.cn',
         'password':'asasas4444'
     }
 ]
