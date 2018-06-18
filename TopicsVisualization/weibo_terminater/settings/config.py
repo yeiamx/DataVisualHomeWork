@@ -31,4 +31,4 @@ ID_FILE_PATH = './settings/id_file'
 PHANTOM_JS_PATH = 'D:/phantomjs-2.1.1-windows/bin/phantomjs.exe'
 
 
-COOKIES_SAVE_PATH = 'settings/cookies.pkl'
+COOKIES_SAVE_ROOT_PATH = 'settings/'

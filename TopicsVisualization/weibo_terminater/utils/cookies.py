@@ -33,7 +33,7 @@ import pickle
 from WeiboCookiesLogin import *
 
 from settings.accounts import accounts
-from settings.config import LOGIN_URL, PHANTOM_JS_PATH, COOKIES_SAVE_PATH
+from settings.config import LOGIN_URL, PHANTOM_JS_PATH, COOKIES_SAVE_ROOT_PATH
 
 
 def count_time():
@@ -62,6 +62,7 @@ def get_cookie_from_network(account_id, account_password):
         print(cookie_string)
         if 'SSOLoginState' in cookie_string:
             print('success get cookies!! \n {}'.format(cookie_string))
+            COOKIES_SAVE_PATH = COOKIES_SAVE_ROOT_PATH + (account_id[:4] + '.pkl') #one account accord to one pkl
             if os.path.exists(COOKIES_SAVE_PATH):
                 with open(COOKIES_SAVE_PATH, 'rb') as f:
                     cookies_dict = pickle.load(f)

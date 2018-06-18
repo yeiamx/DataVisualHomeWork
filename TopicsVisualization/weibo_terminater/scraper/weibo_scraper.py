@@ -35,7 +35,7 @@ import requests
 from lxml import etree
 import traceback
 from pprint import pprint
-from settings.config import COOKIES_SAVE_PATH
+from settings.config import COOKIES_SAVE_ROOT_PATH
 import pickle
 import time
 from utils.sstring import is_number
@@ -44,14 +44,14 @@ from textprocesser import  *
 
 class WeiBoScraper(object):
 
-    def __init__(self, using_account, uuid, filter_flag=0):
+    def __init__(self, using_account, uuid, filter_flag=0, cookie_save_path=''):
         """
         uuid user id, filter flag indicates weibo type
         :param uuid:
         :param filter_flag:
         """
         self.using_account = using_account
-        self._init_cookies()
+        self._init_cookies(cookie_save_path)
         self._init_headers()
 
         self.textprocesser = TextProcessor()
@@ -73,9 +73,9 @@ class WeiBoScraper(object):
         self.COMMENT_PAGE_SLEEP_NUM = 5
         self.MAX_COMMENT_PAGE_NUM = 200
 
-    def _init_cookies(self):
+    def _init_cookies(self, cookies_save_path):
         try:
-            with open(COOKIES_SAVE_PATH, 'rb') as f:
+            with open(cookies_save_path, 'rb') as f:
                 cookies_dict = pickle.load(f)
             cookies_string = cookies_dict[self.using_account]
             cookie = {

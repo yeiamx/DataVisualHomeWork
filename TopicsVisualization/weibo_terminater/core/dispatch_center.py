@@ -17,7 +17,7 @@
 # limitations under the License.
 # ------------------------------------------------------------------------
 from scraper.weibo_scraper import WeiBoScraper
-from settings.config import COOKIES_SAVE_PATH
+from settings.config import COOKIES_SAVE_ROOT_PATH
 from settings.accounts import accounts
 import os
 from utils.cookies import get_cookie_from_network
@@ -65,7 +65,8 @@ class Dispatcher(object):
                 get_cookie_from_network(account['id'], account['password'])
             print('all accounts getting cookies finished. starting scrap..')
         else:
-            if os.path.exists(COOKIES_SAVE_PATH):
+            self.COOKIES_SAVE_PATH = COOKIES_SAVE_ROOT_PATH + accounts[0]['id'][:4]+'.pkl'
+            if os.path.exists(self.COOKIES_SAVE_PATH):
                 pass
             else:
                 for account in accounts:
@@ -79,7 +80,7 @@ class Dispatcher(object):
         :return:
         """
         try:
-            with open(COOKIES_SAVE_PATH, 'rb') as f:
+            with open(self.COOKIES_SAVE_PATH, 'rb') as f:
                 cookies_dict = pickle.load(f)
             self.all_accounts = list(cookies_dict.keys())
             print('----------- detected {} accounts, weibo_terminator will using all accounts to scrap '
@@ -90,7 +91,7 @@ class Dispatcher(object):
             print('error, not find cookies file.')
       
     def _init_single_mode(self):
-        scraper = WeiBoScraper(using_account=self.all_accounts[0], uuid=self.user_id, filter_flag=self.filter_flag)
+        scraper = WeiBoScraper(using_account=self.all_accounts[0], uuid=self.user_id, filter_flag=self.filter_flag, cookie_save_path=self.COOKIES_SAVE_PATH)
         i = 1
         while True:
             result = scraper.crawl()
@@ -115,7 +116,7 @@ class Dispatcher(object):
                 user_ids.append(line.split('\n')[0])
 
         for user_id in user_ids:
-            scraper = WeiBoScraper(using_account=self.all_accounts[0], uuid=user_id, filter_flag=self.filter_flag)
+            scraper = WeiBoScraper(using_account=self.all_accounts[0], uuid=user_id, filter_flag=self.filter_flag, cookie_save_path=self.COOKIES_SAVE_PATH)
             i = 1
             while True:
                 result = scraper.crawl()
