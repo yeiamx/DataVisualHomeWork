@@ -185,7 +185,7 @@ class WeiBoScraper(object):
                     url2 = 'http://weibo.cn/%s?filter=%s&page=%s' % (self.user_id, self.filter, page)
                     html2 = requests.get(url2, cookies=self.cookie, headers=self.headers).content
                     selector2 = etree.HTML(html2)
-                    if selector2==None:
+                    while selector2==None:
                         print('[ATTEMPTING] rest for 5 minutes to cheat weibo site, avoid being banned.')
                         time.sleep(5*60)
                         html2 = requests.get(url2, cookies=self.cookie, headers=self.headers).content
@@ -254,7 +254,7 @@ class WeiBoScraper(object):
                 print('solving weibo detail from {} '.format(url)+str(i)+'/'+str(len(self.weibo_detail_urls)))
                 html_detail = requests.get(url, cookies=self.cookie, headers=self.headers).content
                 selector_detail = etree.HTML(html_detail)
-                if selector_detail==None:
+                while selector_detail==None:
                     print('[ATTEMPTING] rest for 5 minutes to cheat weibo site, avoid being banned.')
                     time.sleep(5*60)
                     html_detail = requests.get(url, cookies=self.cookie, headers=self.headers).content
@@ -293,7 +293,7 @@ class WeiBoScraper(object):
                         # from every detail comment url we will got all comment
                         html_detail_page = requests.get(detail_comment_url, cookies=self.cookie).content
                         selector_comment = etree.HTML(html_detail_page)
-                        if selector_comment==None:
+                        while selector_comment==None:
                             print('[ATTEMPTING] rest for 5 minutes to cheat weibo site, avoid being banned.')
                             time.sleep(5*60)
                             html_detail_page = requests.get(detail_comment_url, cookies=self.cookie).content
