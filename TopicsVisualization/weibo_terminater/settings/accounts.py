@@ -22,11 +22,10 @@ terminator will using all accounts, if one being banned, another will move on.
 until all accounts were banned, scrap stop.
 """
 
-
 # please set this to your own, this is fake accounts
 accounts = [
     {
-        "id": 'yeiamx@sina.cn',
+        "id": '925166340@qq.com',
         'password':'asasas4444'
     }
 ]
