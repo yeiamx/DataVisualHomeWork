@@ -4,6 +4,7 @@ import time
 import json
 import datetime
 import os
+import jieba
 
 class TextProcessor:
 
@@ -29,6 +30,44 @@ class TextProcessor:
             '杨晗', '刘佳莹', '吴昀廷', '王曼君', '张瑜纹', '颜可欣', '王珏萌', '邱路晴', '郑丞丞',
             '山支', '美岐', '宣仪', '五选一', '小七', '菊姐', 'sunnee', '村花'
         ]
+
+    def process_wordle(self, path):
+         resultDict = {}
+         stopwordslist = self.stopwordslist()
+
+         for root, dirs, files in os.walk(path):
+            for index in range(len(files)):
+                file_path = path+'/'+files[index]
+                if file_path.split('.')[-1] =='json':
+                    print('processing '+files[index]+' ...')
+                    with open(file_path, 'r') as f:
+                        resultObject = json.load(f)['result']
+
+                    for jsonObject in resultObject:
+                        content = jsonObject['content']
+                        name = jsonObject['type']
+                        if  not resultDict.__contains__(name):
+                            resultDict[name] = {}
+                        sentence_seged = jieba.cut(content)
+                        for word in sentence_seged:
+                            if word in stopwordslist:
+                                continue
+                            if not resultDict[name].__contains__(word):
+                                resultDict[name][word] = 0
+                            else:
+                                resultDict[name][word] += 1
+         for key in resultDict.keys():
+             resultDict[key] = sorted(resultDict[key].items(),key = lambda x:x[1],reverse = True)
+
+         save_path = path+'/'+'wordleFinalResult.json'
+         with open(save_path, 'w') as f:
+            json.dump(resultDict, f)
+
+
+
+    def stopwordslist(self, filepath="./stop_words.txt"):
+        stopwords = [line.strip() for line in open(filepath, 'r').readlines()]
+        return stopwords
 
     def judge_type(self, weibo):
         for i in range(2, len(self.KEY_WORDS)):
@@ -116,9 +155,9 @@ class TextProcessor:
 
             #调用情感分析api
             """ 你的 APPID AK SK """
-            APP_ID = '11377051'
-            API_KEY = 'DPHGf2kvWedTVhMYZA3YAoQL'
-            SECRET_KEY = 'Xg8vhEBOlOLbdYWsvPue6uh5AT6XBYxP '
+            APP_ID = '11378330'
+            API_KEY = '6p7lQYNEyt0gyFdv3TbiLBa2'
+            SECRET_KEY = 'GbwS98hvZYLsleKdBXlX3ibantoUAZdy'
             client = AipNlp(APP_ID, API_KEY, SECRET_KEY)
 
             finalResult = []
@@ -170,6 +209,7 @@ class TextProcessor:
 
                 print('processing: '+str(index+1)+'/'+str(len(files)))
                 self.process(file_path,save_path)
+
 
 
 
