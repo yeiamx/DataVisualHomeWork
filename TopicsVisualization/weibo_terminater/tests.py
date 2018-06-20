@@ -116,7 +116,12 @@ def test_stopwords():
     print(stopwords)
 
 def test_batch_process():
-    processor.batch_process('E:/UserData/101OriginData')
+    processor.batch_process('D:\learn\datavis\chus101')
+
+def test_process_relation():
+    result = processor.process_relation('./weibo_detail')
+    for i in result:
+        print(i)
 
 def test_cut_words(sentence):
     sentence_seged = jieba.cut(sentence.strip())
@@ -128,6 +133,9 @@ def test_wordle(path):
 
 def test_wordle2(path):
     processor.process_wordle_date(path)
+
+def test_eee(path):
+    processor.process_eee_fff(path)
 
 if __name__ == '__main__':
     #test_numric()
@@ -142,7 +150,11 @@ if __name__ == '__main__':
     #test_processer2()
     test_batch_process()
     #test_batch_process2()
+    #test_process_relation()
     #test_stopwords()
     #test_cut_words('褚二哥你搞什么鬼')
     #test_wordle('./weibo_detail')
     #test_wordle2('./weibo_detail')
+    test_eee('./weibo_detail/eee')
+
+

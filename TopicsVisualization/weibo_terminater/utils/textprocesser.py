@@ -157,6 +157,8 @@ class TextProcessor:
             E = re.findall(r'EEE(.*?)EEE', s)
             F = re.findall(r'FFF(.*?)FFF', s)
             #print(E)
+            print(len(E))
+            print(len(F))
             #print(F)
             result = []
             for index in range(len(F)):
@@ -252,6 +254,43 @@ class TextProcessor:
                 print('processing: '+str(index+1)+'/'+str(len(files)))
                 self.process(file_path,save_path)
 
+    def process_relation(self, path):
+        result = []
+        for i in range(22):
+            a = [0] * 22
+            result.append(a)
+        for root, dirs, files in os.walk(path):
+            for index in range(len(files)):
+                if files[index].split('.')[-1] == 'json':
+                    file_path = path + '/' + files[index]
+                    with open(file_path, 'r') as f:
+                        data = json.load(f)
+                    for infodic in data['result']:
+                        for index1 in range(2, 24):
+                            if self.KEY_WORDS[index1] in infodic['content']:
+                                result[self.KEY_WORDS.index(infodic['type']) - 2][index1 - 2] += 1
+                        for nickname in self.NICKNAME_DICT:
+                            if nickname in infodic['content']:
+                                result[self.KEY_WORDS.index(infodic['type']) - 2][self.KEY_WORDS.index(self.NICKNAME_DICT[nickname]) - 2] += 1
+        for i in range(22):
+            for j in range(22):
+                if i == j:
+                    result[i][j] = 0
+                if j<i:
+                    result[j][i] += result[i][j]
+                    result[i][j] = 0
+
+        return result
+
+    def process_eee_fff(self, path):
+        new_file =''
+        with open(path, 'r', encoding='utf-8') as f:
+            for line in f:
+                new_line = re.sub(r'<.*?(EEE|FFF).*?>', '<>', line)
+                new_line = re.sub(r'\$.*?(EEE|FFF).*?\$', '$$', new_line)
+                new_file += new_line
+        with open(path, 'w', encoding='utf-8') as f:
+            f.write(new_file)
 
 
 
