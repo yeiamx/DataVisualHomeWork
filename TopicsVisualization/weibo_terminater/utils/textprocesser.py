@@ -4,6 +4,7 @@ import time
 import json
 import datetime
 import os
+import jieba
 
 class TextProcessor:
 
@@ -30,6 +31,86 @@ class TextProcessor:
             '山支', '美岐', '宣仪', '五选一', '小七', '菊姐', 'sunnee', '村花'
         ]
 
+    def process_wordle_all(self, path):
+         resultDict = {}
+         stopwordslist = self.stopwordslist()
+
+         for root, dirs, files in os.walk(path):
+            for index in range(len(files)):
+                file_path = path+'/'+files[index]
+                if files[index].split('_')[0] =='process1':
+                    print('processing '+files[index]+' '+str(index+1)+'/'+str(len(files)))
+                    with open(file_path, 'r') as f:
+                        resultObject = json.load(f)['result']
+
+                    for jsonObject in resultObject:
+                        content = jsonObject['content']
+                        name = jsonObject['type']
+                        if  not resultDict.__contains__(name):
+                            resultDict[name] = {}
+                        sentence_seged = jieba.cut(content)
+                        for word in sentence_seged:
+                            if word in stopwordslist:
+                                continue
+                            if not resultDict[name].__contains__(word):
+                                resultDict[name][word] = 1
+                            else:
+                                resultDict[name][word] += 1
+         for key in resultDict.keys():
+             resultDict[key] = sorted(resultDict[key].items(),key = lambda x:x[1],reverse = True)
+
+         save_path = path+'/'+'wordleFinalResult(all).json'
+         with open(save_path, 'w') as f:
+            json.dump(resultDict, f)
+
+
+#   wordle_date
+#     data format:{
+# 	"date":[{name:"", frequency:{word:次数}}, ...]
+# }
+    def process_wordle_date(self, path):
+        resultDict = {}
+        stopwordslist = self.stopwordslist()
+        for root, dirs, files in os.walk(path):
+            for index in range(len(files)):
+                file_path = path+'/'+files[index]
+                #print(file_path)
+                if files[index].split('_')[0] =='process1':
+                    print('processing '+files[index]+' '+str(index+1)+'/'+str(len(files)))
+                    with open(file_path, 'r') as f:
+                        resultObject = json.load(f)['result']
+                        for jsonObject in resultObject:
+                            content = jsonObject['content']
+                            name = jsonObject['type']
+                            date = jsonObject['date']
+                            if not resultDict.__contains__(date):
+                                resultDict[date] = []
+                                for i in range(self.OBSERVE_NUM):
+                                    resultDict[date].append({})
+                                    resultDict[date][i]['name'] = self.KEY_WORDS[i+2]
+                                    resultDict[date][i]['frequency'] = {}
+                            sentence_seged = jieba.cut(content)
+                            for word in sentence_seged:
+                                if word in stopwordslist:
+                                    continue
+                                if self.KEY_WORDS.index(name)-2<self.OBSERVE_NUM:
+                                    if not resultDict[date][self.KEY_WORDS.index(name)-2]['frequency'].__contains__(word):
+                                        resultDict[date][self.KEY_WORDS.index(name)-2]['frequency'][word] = 1
+                                    else:
+                                        resultDict[date][self.KEY_WORDS.index(name)-2]['frequency'][word] += 1
+        for dateKey in resultDict.keys():
+            for i in range(self.OBSERVE_NUM):
+             resultDict[dateKey][i]['frequency'] = sorted(resultDict[dateKey][i]['frequency'].items(),key = lambda x:x[1],reverse = True)
+
+        save_path = path+'/'+'wordleFinalResult(date).json'
+        with open(save_path, 'w') as f:
+            json.dump(resultDict, f)
+
+
+    def stopwordslist(self, filepath="./stop_words.txt"):
+        stopwords = [line.strip() for line in open(filepath, 'r').readlines()]
+        return stopwords
+
     def judge_type(self, weibo):
         for i in range(2, len(self.KEY_WORDS)):
             if self.KEY_WORDS[i] in weibo:
@@ -54,7 +135,7 @@ class TextProcessor:
                 process1List = jsonData['result']
                 for process1Data in process1List:
                     if dateResult.__contains__(process1Data['date']):
-                        if self.KEY_WORDS.index(process1Data['type'])-2 <= 21:
+                        if self.KEY_WORDS.index(process1Data['type'])-2 < self.OBSERVE_NUM:
                             dateResult[process1Data['date']][self.KEY_WORDS.index(process1Data['type'])-2]['mentioned']+=1
                             dateResult[process1Data['date']][self.KEY_WORDS.index(process1Data['type'])-2]['power']+=process1Data['positive_prob']*process1Data['sentiment']
                     else:
@@ -118,9 +199,9 @@ class TextProcessor:
 
             #调用情感分析api
             """ 你的 APPID AK SK """
-            APP_ID = '11377051'
-            API_KEY = 'DPHGf2kvWedTVhMYZA3YAoQL'
-            SECRET_KEY = 'Xg8vhEBOlOLbdYWsvPue6uh5AT6XBYxP '
+            APP_ID = '11378330'
+            API_KEY = '6p7lQYNEyt0gyFdv3TbiLBa2'
+            SECRET_KEY = 'GbwS98hvZYLsleKdBXlX3ibantoUAZdy'
             client = AipNlp(APP_ID, API_KEY, SECRET_KEY)
 
             finalResult = []
@@ -201,10 +282,15 @@ class TextProcessor:
 
         return result
 
-
-
-
-
+    def process_eee_fff(self, path):
+        new_file =''
+        with open(path, 'r', encoding='utf-8') as f:
+            for line in f:
+                new_line = re.sub(r'<.*?(EEE|FFF).*?>', '<>', line)
+                new_line = re.sub(r'\$.*?(EEE|FFF).*?\$', '$$', new_line)
+                new_file += new_line
+        with open(path, 'w', encoding='utf-8') as f:
+            f.write(new_file)
 
 
 

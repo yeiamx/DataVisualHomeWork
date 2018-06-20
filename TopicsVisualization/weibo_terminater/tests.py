@@ -27,6 +27,7 @@ import pathlib
 from textprocesser import TextProcessor
 from getgirlsname import GetName
 import json
+import jieba
 
 processor = TextProcessor()
 def test():
@@ -93,7 +94,7 @@ def test_getname():
     print(names2)
 
 def test_processer():
-    processor.process('./weibo_detail/5596094365.txt', './weibo_detail/process1_5596094365.json')
+    processor.process('./weibo_detail/1792951112.txt', './weibo_detail/process1_1792951112.json')
     #print(r)
     # if processor.judge_weibo('pick宣仪'):
     #     print('yes')
@@ -105,10 +106,14 @@ def test_processer2():
 def test_judge():
     print(processor.judge_type('#sing赖美云# [浮云] #创造101赖美云# 这里是小七@创造101-SING赖美云  的应援会，以后的日子也请一起走吧！下面是一些重要的链接[下]创'))
 
-def test_read():
-    with open('./weibo_detail/finalResult.json', 'r') as f:
+def test_read(path):
+    with open(path, 'r') as f:
         t = json.load(f)
         print(t)
+    return t
+def test_stopwords():
+    stopwords = processor.stopwordslist('stop_words.txt')
+    print(stopwords)
 
 def test_batch_process():
     processor.batch_process('D:\learn\datavis\chus101')
@@ -118,6 +123,20 @@ def test_process_relation():
     for i in result:
         print(i)
 
+def test_cut_words(sentence):
+    sentence_seged = jieba.cut(sentence.strip())
+    for word in sentence_seged:
+        print(word)
+
+def test_wordle(path):
+    processor.process_wordle_all(path)
+
+def test_wordle2(path):
+    processor.process_wordle_date(path)
+
+def test_eee(path):
+    processor.process_eee_fff(path)
+
 if __name__ == '__main__':
     #test_numric()
     #test_detail(test_for_cookies(), test_for_headers())
@@ -126,8 +145,16 @@ if __name__ == '__main__':
     #test_processer()
     #test_getname()
     #test_judge()
-    #test_read()
+    #result = test_read('./weibo_detail/wordleFinalResult(all).json')
+    #print(sorted(result['王菊'].items(),key = lambda x:x[1],reverse = True))
     #test_processer2()
-    test_batch_process()
+    #test_batch_process()
     #test_batch_process2()
     #test_process_relation()
+    #test_stopwords()
+    #test_cut_words('褚二哥你搞什么鬼')
+    #test_wordle('./weibo_detail')
+    #test_wordle2('./weibo_detail')
+    test_eee('./weibo_detail/eee')
+
+
