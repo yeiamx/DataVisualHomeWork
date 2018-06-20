@@ -124,7 +124,10 @@ def test_cut_words(sentence):
         print(word)
 
 def test_wordle(path):
-    processor.process_wordle(path)
+    processor.process_wordle_all(path)
+
+def test_wordle2(path):
+    processor.process_wordle_date(path)
 
 if __name__ == '__main__':
     #test_numric()
@@ -134,7 +137,7 @@ if __name__ == '__main__':
     #test_processer()
     #test_getname()
     #test_judge()
-    result = test_read('./weibo_detail/wordleFinalResult.json')
+    result = test_read('./weibo_detail/wordleFinalResult(all).json')
     #print(sorted(result['王菊'].items(),key = lambda x:x[1],reverse = True))
     #test_processer2()
     #test_batch_process()
@@ -142,3 +145,4 @@ if __name__ == '__main__':
     #test_stopwords()
     #test_cut_words('褚二哥你搞什么鬼')
     #test_wordle('./weibo_detail')
+    #test_wordle2('./weibo_detail')
