@@ -18,7 +18,7 @@
 # ------------------------------------------------------------------------
 from utils.cookies import get_cookie_from_network
 from settings.accounts import accounts
-from settings.config import COOKIES_SAVE_PATH, DEFAULT_USER_ID
+from settings.config import COOKIES_SAVE_ROOT_PATH, DEFAULT_USER_ID
 import pickle
 import requests
 from lxml import etree
@@ -43,18 +43,19 @@ def test_for_headers():
     return headers
 
 def test_for_cookies():
-    with open(COOKIES_SAVE_PATH, 'rb') as f:
-        cookies_dict = pickle.load(f)
-    print(cookies_dict)
+    pass
+    # with open(COOKIES_SAVE_ROOT_PATH, 'rb') as f:
+    #     cookies_dict = pickle.load(f)
+    # print(cookies_dict)
     #user_id = '15116123160'
     #url = 'http://weibo.cn/u/%s?filter=%s&page=1' % (DEFAULT_USER_ID, 0)
     #print(url)
 
-    cookie = {
-        "Cookie": cookies_dict['925166340@qq.com']
-    }
+    # cookie = {
+    #     "Cookie": cookies_dict['925166340@qq.com']
+    # }
     #print(list(cookies_dict.keys()))
-    return cookie
+    # return cookie
 
 def test_numric():
     a = '124556'
@@ -107,15 +108,20 @@ def test_judge():
 def test_read():
     with open('./weibo_detail/finalResult.json', 'r') as f:
         t = json.load(f)
-
         print(t)
+
+def test_batch_process():
+    processor.batch_process('E:/UserData/101OriginData')
+
 if __name__ == '__main__':
     #test_numric()
     #test_detail(test_for_cookies(), test_for_headers())
     #test_comment(test_for_cookies(), test_for_headers())
     #test_file_path()
-    #test_processer()
+    test_processer()
     #test_getname()
     #test_judge()
-    test_read()
+    #test_read()
     #test_processer2()
+    #test_batch_process()
+    #test_batch_process2()

@@ -129,7 +129,7 @@ class TextProcessor:
                         analyresult = client.sentimentClassify(text)
                         print(str(i) + '/' + str(len(result)))
                         while 'error_msg' in analyresult:
-                            print('error')
+                            print('error: '+analyresult)
                             time.sleep(self.SLEEP_TIME)
                             analyresult = client.sentimentClassify(text)
                         finalResultObj = {}
@@ -161,8 +161,15 @@ class TextProcessor:
                 return True
 
         return False
-    
 
+    def batch_process(self, path):
+        for root, dirs, files in os.walk(path):
+            for index in range(len(files)):
+                file_path = path+'/'+files[index]
+                save_path = path+'/process1_'+files[index].split('.')[0]+'.json'
+
+                print('processing: '+str(index+1)+'/'+str(len(files)))
+                self.process(file_path,save_path)
 
 
 
