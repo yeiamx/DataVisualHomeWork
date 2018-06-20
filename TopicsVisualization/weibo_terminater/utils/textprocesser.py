@@ -268,16 +268,16 @@ class TextProcessor:
                     for infodic in data['result']:
                         for index1 in range(2, 24):
                             if self.KEY_WORDS[index1] in infodic['content']:
-                                result[self.KEY_WORDS.index(infodic['type']) - 2][index1 - 2] += 1
+                                if self.KEY_WORDS.index(infodic['type']) - 2 < self.OBSERVE_NUM:
+                                    result[self.KEY_WORDS.index(infodic['type']) - 2][index1 - 2] += 1
                         for nickname in self.NICKNAME_DICT:
                             if nickname in infodic['content']:
-                                result[self.KEY_WORDS.index(infodic['type']) - 2][self.KEY_WORDS.index(self.NICKNAME_DICT[nickname]) - 2] += 1
+                                if self.KEY_WORDS.index(infodic['type']) - 2 < self.OBSERVE_NUM:
+                                #print(self.KEY_WORDS.index(self.NICKNAME_DICT[nickname])-2)
+                                    result[self.KEY_WORDS.index(infodic['type']) - 2][self.KEY_WORDS.index(self.NICKNAME_DICT[nickname]) - 2] += 1
         for i in range(22):
             for j in range(22):
                 if i == j:
-                    result[i][j] = 0
-                if j<i:
-                    result[j][i] += result[i][j]
                     result[i][j] = 0
 
         return result

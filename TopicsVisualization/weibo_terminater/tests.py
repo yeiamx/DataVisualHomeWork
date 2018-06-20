@@ -150,11 +150,11 @@ if __name__ == '__main__':
     #test_processer2()
     #test_batch_process()
     #test_batch_process2()
-    #test_process_relation()
+    test_process_relation()
     #test_stopwords()
     #test_cut_words('褚二哥你搞什么鬼')
     #test_wordle('./weibo_detail')
     #test_wordle2('./weibo_detail')
-    test_eee('./weibo_detail/eee')
+    #test_eee('./weibo_detail/eee')
 
 
