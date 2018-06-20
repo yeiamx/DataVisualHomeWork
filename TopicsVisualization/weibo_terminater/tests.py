@@ -111,17 +111,23 @@ def test_read():
         print(t)
 
 def test_batch_process():
-    processor.batch_process('E:/UserData/101OriginData')
+    processor.batch_process('D:\learn\datavis\chus101')
+
+def test_process_relation():
+    result = processor.process_relation('./weibo_detail')
+    for i in result:
+        print(i)
 
 if __name__ == '__main__':
     #test_numric()
     #test_detail(test_for_cookies(), test_for_headers())
     #test_comment(test_for_cookies(), test_for_headers())
     #test_file_path()
-    test_processer()
+    #test_processer()
     #test_getname()
     #test_judge()
     #test_read()
     #test_processer2()
-    #test_batch_process()
+    test_batch_process()
     #test_batch_process2()
+    #test_process_relation()
