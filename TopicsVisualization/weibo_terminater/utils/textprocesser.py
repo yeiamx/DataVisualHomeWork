@@ -252,6 +252,7 @@ class TextProcessor:
                 save_path = path+'/process1_'+files[index].split('.')[0]+'.json'
 
                 print('processing: '+str(index+1)+'/'+str(len(files)))
+                self.process_eee_fff(file_path)
                 self.process(file_path,save_path)
 
     def process_relation(self, path):

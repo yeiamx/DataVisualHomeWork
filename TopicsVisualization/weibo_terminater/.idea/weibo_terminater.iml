@@ -5,7 +5,7 @@
       <sourceFolder url="file://$MODULE_DIR$/settings" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/utils" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.6.3 (D:\Python36\python.exe)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.6.0 (E:\PYTHON\PYTHONISF\Python 3.6.0 (64-bit)\python.exe)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="TestRunnerService">
