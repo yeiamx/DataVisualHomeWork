@@ -149,13 +149,14 @@ if __name__ == '__main__':
     #print(sorted(result['王菊'].items(),key = lambda x:x[1],reverse = True))
     #test_processer2()
     #test_eee('E:/UserData/101OriginData/1774451041.txt')
-    test_batch_process('E:/UserData/101OriginData')
+    #test_batch_process('E:/UserData/101OriginData')
     #test_batch_process2()
-    #test_process_relation()
+    test_process_relation()
     #test_stopwords()
     #test_cut_words('褚二哥你搞什么鬼')
     #test_wordle('./weibo_detail')
     #test_wordle2('./weibo_detail')
+    #test_eee('./weibo_detail/eee')
 
 
 
