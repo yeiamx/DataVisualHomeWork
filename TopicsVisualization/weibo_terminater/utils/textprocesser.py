@@ -256,13 +256,14 @@ class TextProcessor:
                 self.process(file_path,save_path)
 
     def process_relation(self, path):
+        resultDict = {}
         result = []
         for i in range(22):
             a = [0] * 22
             result.append(a)
         for root, dirs, files in os.walk(path):
             for index in range(len(files)):
-                if files[index].split('.')[-1] == 'json':
+                if files[index].split('_')[0] =='process1':
                     file_path = path + '/' + files[index]
                     with open(file_path, 'r') as f:
                         data = json.load(f)
@@ -281,7 +282,10 @@ class TextProcessor:
                 if i == j:
                     result[i][j] = 0
 
-        return result
+        resultDict['result'] = result
+        save_path = path+'/relationFinalResult.json'
+        with open(save_path, 'w') as f:
+            json.dump(resultDict, f)
 
     def process_eee_fff(self, path):
         new_file =''
