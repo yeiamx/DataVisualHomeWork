@@ -286,7 +286,7 @@ class TextProcessor:
         save_path = path+'/relationFinalResult.json'
         with open(save_path, 'w') as f:
             json.dump(resultDict, f)
-
+    
     def process_eee_fff(self, path):
         new_file =''
         with open(path, 'r', encoding='utf-8') as f:
