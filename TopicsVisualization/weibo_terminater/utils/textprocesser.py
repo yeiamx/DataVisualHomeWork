@@ -5,10 +5,16 @@ import json
 import datetime
 import os
 import jieba
+import chardet
+from textformat import *
 
 class TextProcessor:
 
     def __init__(self):
+        self.APP_ID = '11378330'
+        self.API_KEY = '6p7lQYNEyt0gyFdv3TbiLBa2'
+        self.SECRET_KEY = 'GbwS98hvZYLsleKdBXlX3ibantoUAZdy'
+        self.HIGH_FREQUENCY_THRESHOLD = 2
         self.OBSERVE_NUM = 22
         self.SLEEP_TIME = 0.25
         self.NICKNAME_DICT = {
@@ -31,6 +37,52 @@ class TextProcessor:
             '山支', '美岐', '宣仪', '五选一', '小七', '菊姐', 'sunnee', '村花'
         ]
 
+    def process_wordle2vector(self, root):
+        resultDict = {}
+        resultDict['result'] = []
+        client = AipNlp(self.APP_ID, self.API_KEY, self.SECRET_KEY)
+
+        for i in range(self.OBSERVE_NUM):
+            resultDict['result'].append({})
+            resultDict['result'][i]['name'] = self.KEY_WORDS[i+2]
+
+        path = root+'/wordleFinalResult(all).json'
+        #UTF8_2_GBK(path, path)
+        with open(path, 'r') as f:
+            jsonObject = json.load(f)
+
+        for nameKey in jsonObject.keys():
+            print('processing '+nameKey)
+            if self.KEY_WORDS.index(nameKey)-2<self.OBSERVE_NUM:
+                words = jsonObject[nameKey]
+                ergodic_num = min(self.HIGH_FREQUENCY_THRESHOLD, len(words))
+                vector = []
+
+                num = 0
+                index = 0
+                while num < ergodic_num and index<len(words):   ##if cant find a useful word in the end.
+                    word = words[index][0]
+                    analyresult = client.wordEmbedding(word)
+                    error_flag = 0
+                    while 'error_msg' in analyresult:
+                        print('error: '+analyresult['error_msg'])
+                        if analyresult['error_msg']=='word error':
+                            error_flag = 1
+                            index+=1                 ##if not in the algorithm. Use next word.
+                            break
+                        time.sleep(self.SLEEP_TIME)
+                        analyresult = client.wordEmbedding(word)
+                    if error_flag==0:
+                        vector.extend(analyresult['vec'])
+                        num+=1
+
+                resultDict['result'][self.KEY_WORDS.index(nameKey)-2]['value'] = vector
+
+        save_path = root+'/'+'wordleVectorFinalResult(all).json'
+        with open(save_path, 'w') as f:
+            json.dump(resultDict, f)
+
+
     def process_wordle_all(self, path):
          resultDict = {}
          stopwordslist = self.stopwordslist()
@@ -50,7 +102,7 @@ class TextProcessor:
                             resultDict[name] = {}
                         sentence_seged = jieba.cut(content)
                         for word in sentence_seged:
-                            if word in stopwordslist:
+                            if word in stopwordslist or word==name:
                                 continue
                             if not resultDict[name].__contains__(word):
                                 resultDict[name][word] = 1
@@ -91,7 +143,7 @@ class TextProcessor:
                                     resultDict[date][i]['frequency'] = {}
                             sentence_seged = jieba.cut(content)
                             for word in sentence_seged:
-                                if word in stopwordslist:
+                                if word in stopwordslist or word==name:
                                     continue
                                 if self.KEY_WORDS.index(name)-2<self.OBSERVE_NUM:
                                     if not resultDict[date][self.KEY_WORDS.index(name)-2]['frequency'].__contains__(word):
@@ -197,12 +249,7 @@ class TextProcessor:
 
             print(result)
 
-            #调用情感分析api
-            """ 你的 APPID AK SK """
-            APP_ID = '11378330'
-            API_KEY = '6p7lQYNEyt0gyFdv3TbiLBa2'
-            SECRET_KEY = 'GbwS98hvZYLsleKdBXlX3ibantoUAZdy'
-            client = AipNlp(APP_ID, API_KEY, SECRET_KEY)
+            client = AipNlp(self.APP_ID, self.API_KEY, self.SECRET_KEY)
 
             finalResult = []
             for i in range(len(result)):
@@ -286,7 +333,7 @@ class TextProcessor:
         save_path = path+'/relationFinalResult.json'
         with open(save_path, 'w') as f:
             json.dump(resultDict, f)
-    
+
     def process_eee_fff(self, path):
         new_file =''
         with open(path, 'r', encoding='utf-8') as f:

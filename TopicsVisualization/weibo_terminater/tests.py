@@ -28,6 +28,7 @@ from textprocesser import TextProcessor
 from getgirlsname import GetName
 import json
 import jieba
+from aip import AipNlp
 
 processor = TextProcessor()
 def test():
@@ -111,6 +112,7 @@ def test_read(path):
         t = json.load(f)
         print(t)
     return t
+
 def test_stopwords():
     stopwords = processor.stopwordslist('stop_words.txt')
     print(stopwords)
@@ -137,6 +139,15 @@ def test_wordle2(path):
 def test_eee(path):
     processor.process_eee_fff(path)
 
+def test_process_vector(path):
+    processor.process_wordle2vector(path)
+
+def test_word_vector(word):
+    client = AipNlp(processor.APP_ID, processor.API_KEY, processor.SECRET_KEY)
+    result = client.wordEmbedding(word)
+    print(result['vec'])
+    print(len(result['vec']))
+
 if __name__ == '__main__':
     #test_numric()
     #test_detail(test_for_cookies(), test_for_headers())
@@ -145,18 +156,18 @@ if __name__ == '__main__':
     #test_processer()
     #test_getname()
     #test_judge()
-    #result = test_read('./weibo_detail/wordleFinalResult(all).json')
+    result = test_read('./weibo_detail/wordleFinalResult(all).json')
     #print(sorted(result['王菊'].items(),key = lambda x:x[1],reverse = True))
     #test_processer2()
     #test_eee('E:/UserData/101OriginData/1774451041.txt')
     #test_batch_process('E:/UserData/101OriginData')
     #test_batch_process2()
-    test_process_relation()
+    #test_process_relation()
     #test_stopwords()
     #test_cut_words('褚二哥你搞什么鬼')
     #test_wordle('./weibo_detail')
+    #test_process_vector('./weibo_detail')
     #test_wordle2('./weibo_detail')
     #test_eee('./weibo_detail/eee')
-
-
+    #test_word_vector('情商')
 
