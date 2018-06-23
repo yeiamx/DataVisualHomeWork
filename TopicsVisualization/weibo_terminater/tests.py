@@ -166,7 +166,10 @@ if __name__ == '__main__':
     #test_processer()
     #test_getname()
     #test_judge()
-    #result = test_read('E:/UserData/101OriginData(process_2)/finalResult.json')
+    result = test_read('E:/UserData/101OriginData(process_2)/finalResult.json')
+    for key in result.keys():
+        if key[1]=='6':
+            print(key)
     #print(sorted(result['王菊'].items(),key = lambda x:x[1],reverse = True))
     #test_processer2('E:/UserData/101OriginData(process_1)')
     #test_eee('E:/UserData/101OriginData/1774451041.txt')
@@ -175,7 +178,7 @@ if __name__ == '__main__':
     #test_stopwords()
     #test_cut_words('褚二哥你搞什么鬼')
     #test_wordle('E:/UserData/101OriginData(process_1)')
-    test_process_vector('E:/UserData/101OriginData(process_2)')
+    #test_process_vector('E:/UserData/101OriginData(process_2)')
     #test_wordle2('E:/UserData/101OriginData(process_1)')
     #test_eee('./weibo_detail/eee')
     #test_word_vector('情商')
