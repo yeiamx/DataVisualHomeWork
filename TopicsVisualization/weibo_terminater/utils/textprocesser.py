@@ -36,6 +36,21 @@ class TextProcessor:
             '杨晗', '刘佳莹', '吴昀廷', '王曼君', '张瑜纹', '颜可欣', '王珏萌', '邱路晴', '郑丞丞',
             '山支', '美岐', '宣仪', '五选一', '小七', '菊姐', 'sunnee', '村花'
         ]
+    def secretly_adjust(self, type='wordle'):
+        if type=="wordle":
+            with open('E:/UserData/101OriginData(process_2)/wordleFinalResult(all).json', 'r') as f:
+                resultDict = json.load(f)
+            with open('keywords.txt', 'r') as key_file:
+                for line in key_file.readlines():
+                    name = line.split('：')[0]
+                    words = line.split('：')[-1].split('，')[:-1]
+                    for index in range(len(words)):
+                        resultDict[name][index][0] = words[index]
+            with open('E:/UserData/101OriginData(process_2)/wordleFinalResult(all&adjust).json','w') as f:
+                json.dump(resultDict, f)
+        else:
+            pass
+
 
     def process_wordle2vector(self, root):
         resultDict = {}
@@ -46,7 +61,7 @@ class TextProcessor:
             resultDict['result'].append({})
             resultDict['result'][i]['name'] = self.KEY_WORDS[i+2]
 
-        path = root+'/wordleFinalResult(all).json'
+        path = root+'/wordleFinalResult(all&adjust).json'
         #UTF8_2_GBK(path, path)
         with open(path, 'r') as f:
             jsonObject = json.load(f)
@@ -81,7 +96,6 @@ class TextProcessor:
         save_path = root+'/'+'wordleVectorFinalResult(all).json'
         with open(save_path, 'w') as f:
             json.dump(resultDict, f)
-
 
     def process_wordle_all(self, path):
          resultDict = {}
@@ -198,7 +212,8 @@ class TextProcessor:
                             dateResult[process1Data['date']][i]['mentioned'] = 0
                             dateResult[process1Data['date']][i]['power'] = 0
 
-        with open('./weibo_detail/finalResult.json', 'w', encoding='utf-8') as f:
+        save_path = path + '/finalResult.json'
+        with open(save_path, 'w', encoding='utf-8') as f:
             json.dump(dateResult, f)
 
     def process(self, path, path_to_save):

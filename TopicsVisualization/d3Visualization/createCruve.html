@@ -1,0 +1,114 @@
+<html>  
+<head>  
+	<meta charset="utf-8">  
+	<title>做一个简单的图表</title>  
+</head> 
+
+<body>
+
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>  
+<script>
+	
+	var width = 700;	//画布的宽度
+	var height = 700;	//画布的高度
+
+	var svg = d3.select("body")				//选择文档中的body元素
+				.append("svg")				//添加一个svg元素
+        .attr("transform","translate(100,0)")
+				.attr("width", width)		//设定宽度
+				.attr("height", height);	//设定高度
+  	
+
+
+var ppx=new Array();
+var ppy=new Array();
+var iii=0;
+
+originPointx=[100,150,200,250,300,300,250,200,150,100];
+originPointy=[200,150,200,100,250,400,175,250,300,300]
+createCurve(10);
+function createCurve(  originCount ){  
+    //控制点收缩系数 ，经调试0.6较好，CvPoint是opencv的，可自行定义结构体(x,y)  
+    var scale = 0.6;  
+    var midpointsx=new Array();
+    var midpointsy=new Array();;  
+
+
+
+    //生成中点       
+    for(var i = 0 ;i < originCount ; i++){      
+        var nexti = (i + 1) % originCount;  
+        midpointsx[i] = (originPointx[i] + originPointx[nexti])/2.0;  
+        midpointsy[i] = (originPointy[i] + originPointy[nexti])/2.0;  
+    }      
+      
+    //平移中点  
+    var extrapointsx=new Array();;
+    var extrapointsy=new Array();;   
+    for(var i = 0 ;i < originCount ; i++){  
+         var nexti = (i + 1) % originCount;  
+         var backi = (i + originCount - 1) % originCount;  
+         var midinmidx,midinmidy;  //中点线段的中点
+
+         midinmidx = (midpointsx[i] + midpointsx[backi])/2.0;  
+         midinmidy = (midpointsy[i] + midpointsy[backi])/2.0;  
+         var offsetx = originPointx[i] - midinmidx;  
+         var offsety = originPointy[i] - midinmidy;  
+         var extraindex = 2 * i;  
+         extrapointsx[extraindex] = midpointsx[backi] + offsetx;  
+         extrapointsy[extraindex] = midpointsy[backi] + offsety;  
+         //朝 originPoint[i]方向收缩   
+         var addx = (extrapointsx[extraindex] - originPointx[i]) * scale;  
+         var addy = (extrapointsy[extraindex] - originPointy[i]) * scale;  
+         extrapointsx[extraindex] = originPointx[i] + addx;  
+         extrapointsy[extraindex] = originPointy[i] + addy;  
+           
+         var extranexti = (extraindex + 1)%(2 * originCount);  
+         extrapointsx[extranexti] = midpointsx[i] + offsetx;  
+         extrapointsy[extranexti] = midpointsy[i] + offsety;  
+         //朝 originPoint[i]方向收缩   
+         addx = (extrapointsx[extranexti] - originPointx[i]) * scale;  
+         addy = (extrapointsy[extranexti] - originPointy[i]) * scale;  
+         extrapointsx[extranexti] = originPointx[i] + addx;  
+         extrapointsy[extranexti] = originPointy[i] + addy;  
+           
+    }      
+      
+    var controlPointx=new Array();;
+    var controlPointy=new Array();;  
+    //生成4控制点，产生贝塞尔曲线  
+    for(var i = 0 ;i < originCount ; i++){  
+           controlPointx[0] = originPointx[i];  
+           controlPointy[0] = originPointy[i];
+           var extraindex = 2 * i;  
+           controlPointx[1] = extrapointsx[extraindex + 1];  
+           controlPointy[1] = extrapointsy[extraindex + 1];  
+
+           var extranexti = (extraindex + 2) % (2 * originCount);  
+           controlPointx[2] = extrapointsx[extranexti];                        
+           controlPointy[2] = extrapointsy[extranexti];  
+
+           var nexti = (i + 1) % originCount;  
+           controlPointx[3] = originPointx[nexti];    
+           controlPointy[3] = originPointy[nexti];
+           ppx[iii]=controlPointx[1];
+           ppy[iii]=controlPointy[1];
+    iii=iii+1;
+     ppx[iii]=controlPointx[2];
+           ppy[iii]=controlPointy[2];
+    iii=iii+1;
+    }  
+}  
+
+
+console.log(ppx);
+
+console.log(ppy);
+
+
+
+
+</script>  
+	
+</body>  
+</html>  

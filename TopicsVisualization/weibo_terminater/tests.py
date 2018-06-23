@@ -101,8 +101,8 @@ def test_processer():
     #     print('yes')
     #print(len(processor.KEY_WORDS))
 
-def test_processer2():
-    processor.process2('./weibo_detail')
+def test_processer2(path):
+    processor.process2(path)
 
 def test_judge():
     print(processor.judge_type('#sing赖美云# [浮云] #创造101赖美云# 这里是小七@创造101-SING赖美云  的应援会，以后的日子也请一起走吧！下面是一些重要的链接[下]创'))
@@ -130,6 +130,12 @@ def test_cut_words(sentence):
     for word in sentence_seged:
         print(word)
 
+def test_most_wordle(path, name='王菊', max_num = 5):
+    result = test_read(path)
+    print(name+"'s keyword is")
+    for i in range(max_num):
+        print(result[name][i][0])
+
 def test_wordle(path):
     processor.process_wordle_all(path)
 
@@ -148,7 +154,11 @@ def test_word_vector(word):
     print(result['vec'])
     print(len(result['vec']))
 
+def test_secretly_adjust(type='wordle'):
+    processor.secretly_adjust(type)
+
 if __name__ == '__main__':
+    pass
     #test_numric()
     #test_detail(test_for_cookies(), test_for_headers())
     #test_comment(test_for_cookies(), test_for_headers())
@@ -156,18 +166,18 @@ if __name__ == '__main__':
     #test_processer()
     #test_getname()
     #test_judge()
-    result = test_read('./weibo_detail/wordleFinalResult(all).json')
+    #result = test_read('E:/UserData/101OriginData(process_2)/finalResult.json')
     #print(sorted(result['王菊'].items(),key = lambda x:x[1],reverse = True))
-    #test_processer2()
+    #test_processer2('E:/UserData/101OriginData(process_1)')
     #test_eee('E:/UserData/101OriginData/1774451041.txt')
     #test_batch_process('E:/UserData/101OriginData')
-    #test_batch_process2()
     #test_process_relation()
     #test_stopwords()
     #test_cut_words('褚二哥你搞什么鬼')
-    #test_wordle('./weibo_detail')
-    #test_process_vector('./weibo_detail')
-    #test_wordle2('./weibo_detail')
+    #test_wordle('E:/UserData/101OriginData(process_1)')
+    test_process_vector('E:/UserData/101OriginData(process_2)')
+    #test_wordle2('E:/UserData/101OriginData(process_1)')
     #test_eee('./weibo_detail/eee')
     #test_word_vector('情商')
-
+    #test_most_wordle('E:/UserData/101OriginData(process_2)/wordleFinalResult(all&adjust).json', '王菊', 10)
+    #test_secretly_adjust('wordle')
