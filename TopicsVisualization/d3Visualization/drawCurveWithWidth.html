@@ -135,7 +135,7 @@ function drawLineWithWidth(memberIndex) {
 		var memberOriginDataList = originData['data']
 		//console.log(originData)
 		var memberOriginData = memberOriginDataList[memberIndex]
-		var x = parseInt(dateStr[2]+dateStr[3])*40+10
+		var x = parseInt(dateStr[2]+dateStr[3])*24+6
 		if (memberOriginData['mentioned']!=0) {
 			var y = 500 - (memberOriginData['power']/memberOriginData['mentioned'])*200	//use max_height - height get y.
 			var width = memberOriginData['mentioned']/100

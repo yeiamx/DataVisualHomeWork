@@ -1,146 +1,105 @@
 ﻿
 <!DOCTYPE html>
-<html lang="en" class="no-js">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Grid Menu</title>
+<html>
+<title>W3.CSS Template</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+body {font-family: "Lato", sans-serif}
+.mySlides {display: none}
+</style>
+<body>
 
-    <link rel="stylesheet" type="text/css" href="css/base.css" />
-    <link rel="stylesheet" type="text/css" href="css/demo2.css" />
+<!-- Navbar -->
+<div class="w3-top">
+  <div class="w3-bar w3-black w3-card">
+    <a class="w3-bar-item w3-button w3-padding-large w3-hide-medium w3-hide-large w3-right" href="javascript:void(0)" onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
+    <a href="#" class="w3-bar-item w3-button w3-padding-large">HOME</a>
+    <a href="#band" class="w3-bar-item w3-button w3-padding-large w3-hide-small">BAND</a>
+    <a href="#tour" class="w3-bar-item w3-button w3-padding-large w3-hide-small">TOUR</a>
+    <a href="#contact" class="w3-bar-item w3-button w3-padding-large w3-hide-small">CONTACT</a>
+    <div class="w3-dropdown-hover w3-hide-small">
+      <button class="w3-padding-large w3-button" title="More">MORE <i class="fa fa-caret-down"></i></button>     
+      <div class="w3-dropdown-content w3-bar-block w3-card-4">
+        <a href="#" class="w3-bar-item w3-button">Merchandise</a>
+        <a href="#" class="w3-bar-item w3-button">Extras</a>
+        <a href="#" class="w3-bar-item w3-button">Media</a>
+      </div>
+    </div>
+    <a href="javascript:void(0)" class="w3-padding-large w3-hover-red w3-hide-small w3-right"><i class="fa fa-search"></i></a>
+  </div>
+</div>
 
-    <script>document.documentElement.className="js";var supportsCssVars=function(){var e,t=document.createElement("style");return t.innerHTML="root: { --tmp-var: bold; }",document.head.appendChild(t),e=!!(window.CSS&&window.CSS.supports&&window.CSS.supports("font-weight","var(--tmp-var)")),t.parentNode.removeChild(t),e};supportsCssVars()||alert("Please view this demo in a modern browser that supports CSS Variables.");</script>
+<!-- Navbar on small screens (remove the onclick attribute if you want the navbar to always show on top of the content when clicking on the links) -->
+<div id="navDemo" class="w3-bar-block w3-black w3-hide w3-hide-large w3-hide-medium w3-top" style="margin-top:46px">
+  <a href="#band" class="w3-bar-item w3-button w3-padding-large" onclick="myFunction()">BAND</a>
+  <a href="#tour" class="w3-bar-item w3-button w3-padding-large" onclick="myFunction()">TOUR</a>
+  <a href="#contact" class="w3-bar-item w3-button w3-padding-large" onclick="myFunction()">CONTACT</a>
+  <a href="#" class="w3-bar-item w3-button w3-padding-large" onclick="myFunction()">MERCH</a>
+</div>
 
-</head>
-<body class="demo-2 loading">
-    <svg class="hidden">
-        <symbol id="icon-arrow" viewBox="0 0 24 24">
-            <title>arrow</title>
-            <polygon points="6.3,12.8 20.9,12.8 20.9,11.2 6.3,11.2 10.2,7.2 9,6 3.1,12 9,18 10.2,16.8 " />
-        </symbol>
-        <symbol id="icon-drop" viewBox="0 0 24 24">
-            <title>drop</title>
-            <path d="M12,21c-3.6,0-6.6-3-6.6-6.6C5.4,11,10.8,4,11.4,3.2C11.6,3.1,11.8,3,12,3s0.4,0.1,0.6,0.3c0.6,0.8,6.1,7.8,6.1,11.2C18.6,18.1,15.6,21,12,21zM12,4.8c-1.8,2.4-5.2,7.4-5.2,9.6c0,2.9,2.3,5.2,5.2,5.2s5.2-2.3,5.2-5.2C17.2,12.2,13.8,7.3,12,4.8z" />
-            <path d="M12,18.2c-0.4,0-0.7-0.3-0.7-0.7s0.3-0.7,0.7-0.7c1.3,0,2.4-1.1,2.4-2.4c0-0.4,0.3-0.7,0.7-0.7c0.4,0,0.7,0.3,0.7,0.7C15.8,16.5,14.1,18.2,12,18.2z" />
-        </symbol>
-    </svg>
+<!-- Page content -->
+<div class="w3-content" style="max-width:2000px;margin-top:46px">
 
-    <main>
-        <div class="message">To see the menu, please view on a larger screen.</div>
-        <div class="content content--fixed">
-            <button class="menu-trigger">+ 点我查看效果</button>
-        </div>
-        <div id="content-1" class="content content--switch content--switch-current">
-            <h2 class="content__title">开始</h2>
-            <div class="content__subtitle">首页图随便放点什么？</div>
-        </div>
-        <div id="content-2" class="content content--switch">
-            <h2 class="content__title">Beach123</h2>
-            <div class="content__subtitle">Lift your spirits</div>
-        </div>
-        <div id="content-3" class="content content--switch">
-            <h2 class="content__title">Desert</h2>
-            <div class="content__subtitle">Find yourself</div>
-        </div>
-        <div id="content-4" class="content content--switch">
-            <h2 class="content__title">Ocean</h2>
-            <div class="content__subtitle">Uncover beauty</div>
-        </div>
-        <div id="content-5" class="content content--switch">
-            <h2 class="content__title">Jungle</h2>
-            <div class="content__subtitle">Feel nature</div>
-        </div>
-        <div id="content-6" class="content content--switch">
-            <h2 class="content__title">Mountains</h2>
-            <div class="content__subtitle">Explore your limits</div>
-        </div>
+  <!-- The Band Section -->
+<div class="w3-container w3-content w3-center w3-padding-64" style="max-width:800px" id="band">
+	<div class="panel panel-default"  style="margin-top: 30px;">
+    <div class="panel-heading">
+        <strong  id="canvasTitle">SVG画布</strong>
+    </div>
+    <div class="panel-body" style="padding:0px;">
+        <svg id="svgCanvas" width="100%" height="400">
+        </svg>
+    </div>
+</div>
+  </div>
 
-        <nav class="grim">
-            <div class="grim__item">
-                <div class="grim__item-bg grim__item-bg--1"></div>
-            </div>
-            <div class="grim__item">
-                <div class="grim__item-bg grim__item-bg--2"></div>
-            </div>
-            <div class="grim__item">
-                <div class="grim__item-bg grim__item-bg--3"></div>
-                <div class="grim__item-content">
-                    <div class="grim__item-inner">
-                        <button class="menu-trigger menu-trigger--close">- close</button>
-                    </div>
-                </div>
-            </div>
-            <div class="grim__item">
-                <div class="grim__item-bg grim__item-bg--4"></div>
-            </div>
-            <div class="grim__item">
-                <div class="grim__item-bg grim__item-bg--5"></div>
-                <a href="#content-1" class="grim__link grim__item-content">
-                    <div class="grim__item-inner">
-                        <h3 class="grim__item-title">Home</h3>
-                    </div>
-                </a>
-            </div>
-            <div class="grim__item">
-                <div class="grim__item-bg grim__item-bg--6"></div>
-                <div class="grim__item-img grim__item-img--1" style="background-image: url(img/1.jpg);"></div>
-                <a href="#content-2" class="grim__link grim__item-content">
-                    <div class="grim__item-inner">
-                        <h3 class="grim__item-title">Beach</h3>
-                        <span class="grim__item-desc">Lift your spirits</span>
-                    </div>
-                </a>
-                <div class="grim__item-bg grim__item-bg-cover grim__item-bg--6"></div>
-            </div>
-            <div class="grim__item">
-                <div class="grim__item-bg grim__item-bg--7"></div>
-                <div class="grim__item-img grim__item-img--2" style="background-image: url(img/2.jpg);"></div>
-                <a href="#content-3" class="grim__link grim__item-content">
-                    <div class="grim__item-inner">
-                        <h3 class="grim__item-title">ALL</h3>
-                        <span class="grim__item-desc">这里可以放整体的图</span>
-                    </div>
-                </a>
-                <div class="grim__item-bg grim__item-bg-cover grim__item-bg--7"></div>
-            </div>
-            <div class="grim__item">
-                <div class="grim__item-bg grim__item-bg--8"></div>
-                <div class="grim__item-img grim__item-img--3" style="background-image: url(img/3.jpg);"></div>
-                <a href="#content-4" class="grim__link grim__item-content">
-                    <div class="grim__item-inner">
-                        <h3 class="grim__item-title">team</h3>
-                        <span class="grim__item-desc">这里可以放一些选择的按钮</span>
-                    </div>
-                </a>
-                <div class="grim__item-bg grim__item-bg-cover grim__item-bg--8"></div>
-            </div>
-            <div class="grim__item">
-                <div class="grim__item-bg grim__item-bg--9"></div>
-                <div class="grim__item-img grim__item-img--4" style="background-image: url(img/4.jpg);"></div>
-                <a href="#content-5" class="grim__link grim__item-content">
-                    <div class="grim__item-inner">
-                        <h3 class="grim__item-title">personal</h3>
-                        <span class="grim__item-desc">这里可以放个人图1</span>
-                    </div>
-                </a>
-                <div class="grim__item-bg grim__item-bg-cover grim__item-bg--9"></div>
-            </div>
-            <div class="grim__item">
-                <div class="grim__item-bg grim__item-bg--10"></div>
-                <div class="grim__item-img grim__item-img--5" style="background-image: url(img/5.jpg);"></div>
-                <a href="#content-6" class="grim__link grim__item-content">
-                    <div class="grim__item-inner">
-                        <h3 class="grim__item-title">personal2</h3>
-                        <span class="grim__item-desc">这里可以放个人的关系图</span>
-                    </div>
-                </a>
-                <div class="grim__item-bg grim__item-bg-cover grim__item-bg--10"></div>
-            </div>
-        </nav>
-    </main>
-    <script src="js/demo.js"></script>
-    <script src="js/imagesloaded.pkgd.min.js"></script>
-    <script src="js/anime.min.js"></script>
-    <script src="js/menu2.js"></script>
+  <!-- The Tour Section -->
+  <div class="w3-container w3-content w3-center w3-padding-64" style="max-width:800px" id="tour">
+	<div>22222</div>
+  </div>
+
+  <!-- Ticket Modal -->
+  <div id="ticketModal" class="w3-container w3-content w3-center w3-padding-64" style="max-width:800px">
+	<div>33333</div>
+  </div>
+
+  <!-- The Contact Section -->
+  <div class="w3-container w3-content w3-center w3-padding-64" style="max-width:800px" id="contact">
+    <div>444444</div>
+  </div>
+  
+<!-- End Page Content -->
+
+
+<script src="http://d3js.org/d3.v4.min.js" charset="utf-8"></script>
+<script src="js/finalResult.js" charset="utf-8"></script>
+<script>
+	var width = 700;	//画布的宽度
+	var height = 700;	//画布的高度
+
+	var svg = d3.select("body")				//选择文档中的body元素
+				.append("svg")				//添加一个svg元素
+        .attr("transform","translate(100,0)")
+				.attr("width", width)		//设定宽度
+				.attr("height", height);	//设定高度
+	canvas = d3.select('#svgCanvas'),   //获取画布
+    canvasTitle = d3.select('#canvasTitle'),    //  获取标题区域
+    lineGenerator = d3.line()
+                      .x(function(d) {
+                            return d[0]
+                        })
+                      .y(function(d) {
+                            return d[1];
+                       });
+	drawLine(memberName.indexOf('王菊'))
+	drawLine(memberName.indexOf('杨超越'))
+	
+
+</script>
+
 </body>
 </html>
