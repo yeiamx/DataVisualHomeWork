@@ -2,7 +2,14 @@
 remain variables:
 	var width = 700;	//画布的宽度
 	var height = 700;	//画布的高度
-
+	
+	var svgWidth = d3.select("body")				//选择文档中的body元素
+				.append("svg")				//添加一个svg元素
+        .attr("transform","translate(100,0)")
+				.attr("width", width)		//设定宽度
+				.attr("height", height);	//设定高度
+  	
+	
 	var svg = d3.select("body")				//选择文档中的body元素
 				.append("svg")				//添加一个svg元素
         .attr("transform","translate(100,0)")
@@ -125,6 +132,7 @@ function createCurve(originCount, originPointx, originPointy){
 
 //  添加某位选手的热度曲线
 function drawLineWithWidth(memberIndex) {
+	
 	var originPointx=[];
 	var originPointy=[];
 	var data = []
@@ -146,7 +154,7 @@ function drawLineWithWidth(memberIndex) {
 	}
 	bubbleSort(data)
 	data = data.slice(0,cutDate)
-	console.log(data)
+	//console.log(data)
 	//up points
 	for (var i=0; i<data.length; i++) {
 		originPointx.push(data[i][0]); originPointy.push(data[i][1]-data[i][2]);
@@ -167,10 +175,10 @@ function drawLineWithWidth(memberIndex) {
 		string=string+" C "+ppx[i*2]+" "+ppy[i*2]+" "+ppx[i*2+1]+" " +ppy[i*2+1]+" "+originPointx[(i+1) % originCount ]+" "+originPointy[(i+1) % originCount ];
 	}
 
-	console.log(string);
+	// console.log(string);
 
 	// console.log("M "+ originPointx[i1]+" "+originPointy[i1++]+" C "+ ppx[i2]+" "+ppy[i2++]+" "+ ppx[i2]+" "+ppy[i2++]+" "+ originPointx[i1]+" "+originPointy[i1++])
-	svg.append("path")
+	svgWidth.append("path")
 	// .attr("d","M "+ originPointx[i1]+" "+originPointy[i1++]+" C "+ ppx[i2]+" "+ppy[i2++]+" "+ ppx[i2]+" "+ppy[i2++]+" "+ originPointx[i1]+" "+originPointy[i1++] + )
 	.attr("d",string)
 	.attr("fill","blue")
@@ -186,7 +194,7 @@ function drawLineWithWidth(memberIndex) {
 	.orient("bottom")
 	.ticks(5);
 
-	svg.append("g")
+	svgWidth.append("g")
 	.attr("transform","translate(0,400)")
 	.call(axis);
 }
@@ -212,7 +220,6 @@ function createLine(color, lineData, title) {
                 .attr('d', lineData);
 }
 
-
 //  添加某位选手的曲线
 function drawLine(memberIndex) {
 	var data = []
@@ -228,7 +235,7 @@ function drawLine(memberIndex) {
 			var y = 500 - (memberOriginData['power']/memberOriginData['mentioned'])*200	//use max_height - height get y.
 		}
 		//console.log(memberOriginData)
-		console.log('x:'+x+' height:'+(memberOriginData['power']/memberOriginData['mentioned'])*200)
+		//console.log('x:'+x+' height:'+(memberOriginData['power']/memberOriginData['mentioned'])*200)
 		memberData.push(x); memberData.push(y);
 		data.push(memberData)
 	}
@@ -237,6 +244,5 @@ function drawLine(memberIndex) {
 	data = data.slice(0,cutDate)
 	var typeIndex = 0
 	var lines = lineGenerator.curve(d3[curves[typeIndex]])(data)
-	createLine(colors[memberIndex], lines, curves[typeIndex]);
-	
+	createLine(colors[memberIndex], lines, '情感趋势');
 }
