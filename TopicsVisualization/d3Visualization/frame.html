@@ -9,13 +9,15 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <script src="js/jquery-1.12.4.js"></script> 
-<script src="http://d3js.org/d3.v4.min.js" charset="utf-8"></script>
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script src="js/d3.layout.cloud.js" charset="utf-8"></script>
 <script src="js/finalResult.js" charset="utf-8"></script>
 <style>
 body {font-family: "Lato", sans-serif}
 .mySlides {display: none}
 </style>
 <body>
+
 
 <!-- Navbar -->
 <div class="w3-top">
@@ -74,7 +76,12 @@ body {font-family: "Lato", sans-serif}
 
   <!-- Ticket Modal -->
   <div id="ticketModal" class="w3-container w3-content w3-center w3-padding-64" style="max-width:800px">
-	<div>333333</div>
+	<div class="panel panel-default"  style="margin-top: 30px;">
+		<div class="panel-body" style="padding:0px;">
+			<svg id="svgWordleCanvas" width="100%" height="400">
+			</svg>
+		</div>
+	</div>
   </div>
 
   <!-- The Contact Section -->
@@ -90,6 +97,7 @@ body {font-family: "Lato", sans-serif}
 	var group_radio_element = document.getElementById('group_mode');
 	var draw_button = document.getElementById('draw')
 	var empty_button = document.getElementById('empty')
+	var lines = [];
 	//console.log(member_element.nodeType)
 	
 	for (var i=0; i<memberName.length; i++) {
@@ -126,7 +134,7 @@ body {font-family: "Lato", sans-serif}
 			var name_label_element = document.createElement("label");
 			var name_input_element = document.createElement("input");
 			var name_image_element = document.createElement("img");
-
+			
 			name_image_element.setAttribute('src',"img/101pic/"+i+".jpg");
 			name_image_element.setAttribute('height','60');
 			name_image_element.setAttribute('width','60');
@@ -158,14 +166,15 @@ body {font-family: "Lato", sans-serif}
 	}
 	
 	function draw() {
+		$("#svgCanvas").empty()
+		$("#svgWordleCanvas").empty()
 		if (self_radio_element.checked) {
-			$("#svgCanvas").empty()
-			
 			for (var i=0; i<self.memberName.length; i++) {
 				var radio_option_element = document.getElementById(memberName[i]+'_radio');
 				if (radio_option_element.checked){
 					console.log(memberName[i]+" being checked")
 					drawLineWithWidth(i);
+					drawMemberWords(i);
 					break;
 				}
 			}
@@ -175,9 +184,89 @@ body {font-family: "Lato", sans-serif}
 				if (check_option_element.checked){
 					console.log(memberName[i]+" being checked")
 					drawLine(i);
+					if (lines.indexOf(i)<0) {
+						lines.push(i);
+					}
 				}
 			}
+			drawLengend();
 		}
+	}
+	
+	function drawLengend() {
+	  var legend = canvas.append("g")
+	  .attr("class", "legend")
+        //.attr("x", w - 65)
+        //.attr("y", 50)
+	  .attr("height", 100)
+	  .attr("width", 100)
+	  .attr('transform', 'translate(-20,50)')    
+      
+    
+    legend.selectAll('rect')
+      .data(lines)
+      .enter()
+      .append("rect")
+	  .attr("x", width - 65)
+      .attr("y", function(d, i){ return i *  20;})
+	  .attr("width", 10)
+	  .attr("height", 10)
+	  .style("fill", function(d) { 
+        var color = colors[d];
+        return color;
+      })
+      
+    legend.selectAll('text')
+      .data(lines)
+      .enter()
+      .append("text")
+	  .attr("x", width - 52)
+      .attr("y", function(d, i){ return i *  20 + 9;})
+	  .text(function(d) {
+        return memberName[d];
+      });
+	}
+	
+	function drawWordle(words) {
+		wordleCanvas.append("g")
+                // without the transform, words words would get cutoff to the left and top, they would
+                // appear outside of the SVG area
+                .attr("transform", "translate(320,200)")
+                .selectAll("text")
+                .data(words)
+                .enter().append("text")
+                .style("font-size", function(d) { return d.size + "px"; })
+                .style("fill", function(d, i) { return wordleColors(i); })
+                .attr("transform", function(d) {
+                    return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+                })
+                .text(function(d) { return d.text; });	
+	}
+	
+	function getFrequencyList(i){
+		var frequency_list = [];
+		var words = wordleFinalResult[memberName[i]];
+		for (var i=0; i<80; i++) {
+			var object = {};
+			object["text"] = words[i][0]; object['size'] = words[i][1] / 10;
+			frequency_list.push(object);
+		}
+		return frequency_list;
+	}
+	
+	//画某个成员的wordle
+	function drawMemberWords(i) {
+		var frequency_list = getFrequencyList(i);
+				
+		wordleColors
+				.domain([0,1,2,3,4,5,6,10,15,20,100])
+				.range(["#ddd", "#ccc", "#bbb", "#aaa", "#999", "#888", "#777", "#666", "#555", "#444", "#333", "#222"]);
+		d3.layout.cloud().size([800, 300])
+				.words(frequency_list)
+				.rotate(0)
+				.fontSize(function(d) { return d.size; })
+				.on("end", drawWordle)
+				.start();
 	}
 	
 	function changeToSelfMode() {
@@ -191,8 +280,18 @@ body {font-family: "Lato", sans-serif}
 		$("#svgCanvas").empty()
 		addOptions('group')
 	}
-	
-	empty_button.onclikc = empty;
+	//  获取颜色组合
+	var colors = ["#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78", "#2ca02c", "#98df8a", "#d62728", "#ff9896", "#9467bd", "#c5b0d5", "#8c564b", "#c49c94", "#e377c2", "#f7b6d2", "#7f7f7f", "#c7c7c7", "#bcbd22", "#dbdb8d", "#17becf", "#9edae5"],
+		len = colors.length,
+		//  获取相关的曲线工厂
+		curves = ['curveBasis', 'curveBasisClosed', 'curveBasisOpen', 'curveBundle', 'curveCardinal','curveCardinalClosed', 'curveCardinalOpen', 'curveCatmullRom', 'curveCatmullRomClosed','curveCatmullRomOpen', 'curveLinear','curveLinearClosed', 'curveMonotoneX', 'curveMonotoneY',
+				 'curveNatural', 'curveStep', 'curveStepAfter', 'curveStepBefore'];
+		//console.log(colors)
+		colors.push('#FF82AB')
+		colors.push('#CD5C5C')
+	var wordleColors = d3.scale.linear();
+			
+	empty_button.onclick = empty;
 	draw_button.onclick = draw;
 	self_radio_element.onchange = changeToSelfMode;
 	group_radio_element.onchange = changeToGroupMode;
@@ -202,8 +301,12 @@ body {font-family: "Lato", sans-serif}
 	canvas = d3.select('#svgCanvas')	//获取画布
 				.attr("width", width)		//设定宽度
 				.attr("height", height);	//设定高度,   
+	wordleCanvas = d3.select('#svgWordleCanvas')	//获取wordle画布
+				.attr("width", width)		//设定宽度
+				.attr("height", height)	//设定高度,
+				.attr("class", "wordcloud");
     canvasTitle = d3.select('#canvasTitle'),    //  获取标题区域
-    lineGenerator = d3.line()
+    lineGenerator = d3.svg.line()
                       .x(function(d) {
                             return d[0]
                         })
@@ -211,6 +314,9 @@ body {font-family: "Lato", sans-serif}
                             return d[1];
                        });
 	
+	
+
+
 	//self_mode
 	
 	//drawLine(memberName.indexOf('王菊'))
