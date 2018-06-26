@@ -4,9 +4,7 @@
 <title>W3.CSS Template</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
 <script src="js/jquery-1.12.4.js"></script> 
 <script src="http://d3js.org/d3.v4.min.js" charset="utf-8"></script>
 <script src="js/finalResult.js" charset="utf-8"></script>
@@ -92,22 +90,44 @@ body {font-family: "Lato", sans-serif}
 	for (var i=0; i<memberName.length; i++) {
 		var name_label_element = document.createElement("label");
 		var name_input_element = document.createElement("input");
+		var name_image_element = document.createElement("img");
+		name_image_element.setAttribute('src',"101pic/101pic/"+i+".jpg");
+		name_image_element.setAttribute('height','60');
+		name_image_element.setAttribute('width','60');
+
+		name_label_element.setAttribute('style',"display:inline-block;width:70px");
 		name_label_element.setAttribute('id', memberName[i]+'_label'); 
+
 		name_input_element.setAttribute('id', memberName[i]+'_check');
 		name_input_element.setAttribute('type', "checkbox");
-		name_input_element.setAttribute('style', "margin: 10px");
+		name_input_element.setAttribute('style', "margin: 3px");
+		
+
+
+		// name_label_element.setAttribute('style',"font-size:10px;display:inline-block;width:50px;background-image: url(./101pic/101pic/"+i+".jpg);background-size:cover;padding: 10px");
+
+		name_label_element.appendChild(name_image_element)
 		name_label_element.appendChild(document.createTextNode(memberName[i]));
 		name_label_element.appendChild(name_input_element)
-		
-		member_element.appendChild(name_label_element)
+
+		 member_element.appendChild(name_label_element)
+
 	}
-	
+			 console.log(member_element);
+
 	function addOptions(mode){
 		for (var i=0; i<memberName.length; i++) {
 			console.log('add '+i)
 			var name_label_element = document.createElement("label");
 			var name_input_element = document.createElement("input");
-			name_label_element.setAttribute('id', memberName[i]+'_label'); 
+			var name_image_element = document.createElement("img");
+
+name_image_element.setAttribute('src',"101pic/101pic/"+i+".jpg");
+		name_image_element.setAttribute('height','60');
+		name_image_element.setAttribute('width','60');
+
+		name_label_element.setAttribute('style',"display:inline-block;width:70px");
+		name_label_element.setAttribute('id', memberName[i]+'_label'); 
 			if (mode=='group'){
 				name_input_element.setAttribute('id', memberName[i]+'_check');
 				name_input_element.setAttribute('type', "checkbox");
@@ -117,11 +137,14 @@ body {font-family: "Lato", sans-serif}
 				name_input_element.setAttribute('type', 'radio');
 				name_input_element.setAttribute('name', 'radio_options');
 			}
-			name_input_element.setAttribute('style', "margin: 10px");
-			name_label_element.appendChild(document.createTextNode(memberName[i]));
-			name_label_element.appendChild(name_input_element)
-			
-			member_element.appendChild(name_label_element)
+			name_input_element.setAttribute('style', "margin: 3px");
+
+			name_label_element.appendChild(name_image_element)
+		name_label_element.appendChild(document.createTextNode(memberName[i]));
+		name_label_element.appendChild(name_input_element)
+
+		 member_element.appendChild(name_label_element)
+		 console.log(name_label_element);
 		}
 	}
 	
