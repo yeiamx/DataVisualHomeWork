@@ -175,26 +175,26 @@ function drawLineWithWidth(memberIndex) {
 		string=string+" C "+ppx[i*2]+" "+ppy[i*2]+" "+ppx[i*2+1]+" " +ppy[i*2+1]+" "+originPointx[(i+1) % originCount ]+" "+originPointy[(i+1) % originCount ];
 	}
 
-	// console.log(string);
+	//console.log(string);
 
 	// console.log("M "+ originPointx[i1]+" "+originPointy[i1++]+" C "+ ppx[i2]+" "+ppy[i2++]+" "+ ppx[i2]+" "+ppy[i2++]+" "+ originPointx[i1]+" "+originPointy[i1++])
-	svgWidth.append("path")
+	canvas.append("path")
 	// .attr("d","M "+ originPointx[i1]+" "+originPointy[i1++]+" C "+ ppx[i2]+" "+ppy[i2++]+" "+ ppx[i2]+" "+ppy[i2++]+" "+ originPointx[i1]+" "+originPointy[i1++] + )
 	.attr("d",string)
 	.attr("fill","blue")
 	.attr("stroke","blue");
 
 
-	var linear1=d3.scale.linear()
+	var linear1=d3.scaleLinear() 
 	.domain( [0,500] )
 	.range(  [0,500] );
-
-	var axis=d3.svg.axis()
-	.scale(linear1)
-	.orient("bottom")
-	.ticks(5);
-
-	svgWidth.append("g")
+	
+	//var axis=d3.svg.axis()
+	//.scale(linear1)
+	//.orient("bottom")
+	var axis = d3.axisBottom(linear1);
+	
+	canvas.append("g")
 	.attr("transform","translate(0,400)")
 	.call(axis);
 }

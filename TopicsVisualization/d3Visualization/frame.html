@@ -5,6 +5,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <script src="js/jquery-1.12.4.js"></script> 
 <script src="http://d3js.org/d3.v4.min.js" charset="utf-8"></script>
 <script src="js/finalResult.js" charset="utf-8"></script>
@@ -47,7 +50,8 @@ body {font-family: "Lato", sans-serif}
 
   <!-- The Band Section -->
   <div class="w3-container w3-content w3-center w3-padding-64" style="max-width:800px" id="member_container">
-	<button id="refresh">Refresh</button>
+	<button id="draw">Draw</button>
+	<button id="empty">Empty</button>
 	<div>模式：   
 		<label>个人：<input type="radio" name="mode_radio" id="self_mode"></label>
 		<label>团体：<input type="radio" name="mode_radio" id="group_mode" checked></label>
@@ -59,7 +63,7 @@ body {font-family: "Lato", sans-serif}
   <div class="w3-container w3-content w3-center w3-padding-64" style="max-width:800px" id="tour">
 	<div class="panel panel-default"  style="margin-top: 30px;">
 		<div class="panel-heading">
-			<strong  id="canvasTitle">情感趋势</strong>
+			<strong  id="canvasTitle">情感(热度)趋势</strong>
 		</div>
 		<div class="panel-body" style="padding:0px;">
 			<svg id="svgCanvas" width="100%" height="400">
@@ -84,14 +88,15 @@ body {font-family: "Lato", sans-serif}
 	var member_element = document.getElementById("member");
 	var self_radio_element = document.getElementById('self_mode');
 	var group_radio_element = document.getElementById('group_mode');
-	var refresh_button = document.getElementById('refresh')
+	var draw_button = document.getElementById('draw')
+	var empty_button = document.getElementById('empty')
 	//console.log(member_element.nodeType)
 	
 	for (var i=0; i<memberName.length; i++) {
 		var name_label_element = document.createElement("label");
 		var name_input_element = document.createElement("input");
 		var name_image_element = document.createElement("img");
-		name_image_element.setAttribute('src',"101pic/101pic/"+i+".jpg");
+		name_image_element.setAttribute('src',"img/101pic/"+i+".jpg");
 		name_image_element.setAttribute('height','60');
 		name_image_element.setAttribute('width','60');
 
@@ -110,24 +115,24 @@ body {font-family: "Lato", sans-serif}
 		name_label_element.appendChild(document.createTextNode(memberName[i]));
 		name_label_element.appendChild(name_input_element)
 
-		 member_element.appendChild(name_label_element)
+		member_element.appendChild(name_label_element)
 
 	}
-			 console.log(member_element);
+
 
 	function addOptions(mode){
 		for (var i=0; i<memberName.length; i++) {
-			console.log('add '+i)
+			//console.log('add '+i)
 			var name_label_element = document.createElement("label");
 			var name_input_element = document.createElement("input");
 			var name_image_element = document.createElement("img");
 
-name_image_element.setAttribute('src',"101pic/101pic/"+i+".jpg");
-		name_image_element.setAttribute('height','60');
-		name_image_element.setAttribute('width','60');
+			name_image_element.setAttribute('src',"img/101pic/"+i+".jpg");
+			name_image_element.setAttribute('height','60');
+			name_image_element.setAttribute('width','60');
 
-		name_label_element.setAttribute('style',"display:inline-block;width:70px");
-		name_label_element.setAttribute('id', memberName[i]+'_label'); 
+			name_label_element.setAttribute('style',"display:inline-block;width:70px");
+			name_label_element.setAttribute('id', memberName[i]+'_label'); 
 			if (mode=='group'){
 				name_input_element.setAttribute('id', memberName[i]+'_check');
 				name_input_element.setAttribute('type', "checkbox");
@@ -144,36 +149,59 @@ name_image_element.setAttribute('src',"101pic/101pic/"+i+".jpg");
 		name_label_element.appendChild(name_input_element)
 
 		 member_element.appendChild(name_label_element)
-		 console.log(name_label_element);
+		 //console.log(name_label_element);
 		}
 	}
 	
-	function refresh() {
-		
+	function empty() {
+		$("#svgCanvas").empty()
+	}
+	
+	function draw() {
+		if (self_radio_element.checked) {
+			$("#svgCanvas").empty()
+			
+			for (var i=0; i<self.memberName.length; i++) {
+				var radio_option_element = document.getElementById(memberName[i]+'_radio');
+				if (radio_option_element.checked){
+					console.log(memberName[i]+" being checked")
+					drawLineWithWidth(i);
+					break;
+				}
+			}
+		} else {
+			for (var i=0; i<self.memberName.length; i++) {
+				var check_option_element = document.getElementById(memberName[i]+'_check');
+				if (check_option_element.checked){
+					console.log(memberName[i]+" being checked")
+					drawLine(i);
+				}
+			}
+		}
 	}
 	
 	function changeToSelfMode() {
 		$("#member").empty();
+		$("#svgCanvas").empty()
 		addOptions('self')
 	}
 	
 	function changeToGroupMode() {
 		$("#member").empty();
+		$("#svgCanvas").empty()
 		addOptions('group')
 	}
 	
-	refresh_button.onclick = refresh;
+	empty_button.onclikc = empty;
+	draw_button.onclick = draw;
 	self_radio_element.onchange = changeToSelfMode;
 	group_radio_element.onchange = changeToGroupMode;
-	var width = 400;	//画布的宽度
-	var height = 200;	//画布的高度
-
-	var svg = d3.select("body")				//选择文档中的body元素
-				.append("svg")				//添加一个svg元素
-        .attr("transform","translate(100,0)")
+	var width = 800;	//画布的宽度
+	var height = 600;	//画布的高度
+			
+	canvas = d3.select('#svgCanvas')	//获取画布
 				.attr("width", width)		//设定宽度
-				.attr("height", height);	//设定高度
-	canvas = d3.select('#svgCanvas'),   //获取画布
+				.attr("height", height);	//设定高度,   
     canvasTitle = d3.select('#canvasTitle'),    //  获取标题区域
     lineGenerator = d3.line()
                       .x(function(d) {
