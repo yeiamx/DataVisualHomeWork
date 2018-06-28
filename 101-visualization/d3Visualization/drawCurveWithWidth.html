@@ -1,0 +1,196 @@
+<html>  
+<head>  
+	<meta charset="utf-8">  
+	<title>做一个简单的图表</title>  
+</head> 
+
+<body>
+
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script src="js/finalResult.js"></script>  
+<script>
+	var cutDate = 15
+	var width = 700;	//画布的宽度
+	var height = 700;	//画布的高度
+	
+	var svg = d3.select("body")				//选择文档中的body元素
+				.append("svg")				//添加一个svg元素
+        .attr("transform","translate(100,0)")
+				.attr("width", width)		//设定宽度
+				.attr("height", height);	//设定高度
+  	
+
+
+var ppx=new Array();
+var ppy=new Array();
+var iii=0;
+
+//	冒泡
+ function bubbleSort(arr){
+      for(var i=0;i<arr.length-1;i++){
+          for(var j=0;j<arr.length-i-1;j++){
+              if(arr[j][0]>arr[j+1][0]){
+                  var temp=arr[j];
+                  arr[j]=arr[j+1];
+                  arr[j+1]=temp;
+              }
+          }
+      }
+      return arr;
+  }
+  
+originDataList = []
+for (var dateKey in finalResult){
+	if (dateKey[0]=='0' && dateKey[1]=='6'){
+		var originObject = {}
+		originObject['date'] = dateKey
+		originObject['data'] = finalResult[dateKey]
+		originDataList.push(originObject)
+	}
+}
+
+function createCurve(originCount, originPointx, originPointy){  
+    //控制点收缩系数 ，经调试0.6较好，CvPoint是opencv的，可自行定义结构体(x,y)  
+    var scale = 0.6;  
+    var midpointsx=new Array();
+    var midpointsy=new Array();;  
+
+
+
+    //生成中点       
+    for(var i = 0 ;i < originCount ; i++){      
+        var nexti = (i + 1) % originCount;  
+        midpointsx[i] = (originPointx[i] + originPointx[nexti])/2.0;  
+        midpointsy[i] = (originPointy[i] + originPointy[nexti])/2.0;  
+    }      
+      
+    //平移中点  
+    var extrapointsx=new Array();;
+    var extrapointsy=new Array();;   
+    for(var i = 0 ;i < originCount ; i++){  
+         var nexti = (i + 1) % originCount;  
+         var backi = (i + originCount - 1) % originCount;  
+         var midinmidx,midinmidy;  //中点线段的中点
+
+         midinmidx = (midpointsx[i] + midpointsx[backi])/2.0;  
+         midinmidy = (midpointsy[i] + midpointsy[backi])/2.0;  
+         var offsetx = originPointx[i] - midinmidx;  
+         var offsety = originPointy[i] - midinmidy;  
+         var extraindex = 2 * i;  
+         extrapointsx[extraindex] = midpointsx[backi] + offsetx;  
+         extrapointsy[extraindex] = midpointsy[backi] + offsety;  
+         //朝 originPoint[i]方向收缩   
+         var addx = (extrapointsx[extraindex] - originPointx[i]) * scale;  
+         var addy = (extrapointsy[extraindex] - originPointy[i]) * scale;  
+         extrapointsx[extraindex] = originPointx[i] + addx;  
+         extrapointsy[extraindex] = originPointy[i] + addy;  
+           
+         var extranexti = (extraindex + 1)%(2 * originCount);  
+         extrapointsx[extranexti] = midpointsx[i] + offsetx;  
+         extrapointsy[extranexti] = midpointsy[i] + offsety;  
+         //朝 originPoint[i]方向收缩   
+         addx = (extrapointsx[extranexti] - originPointx[i]) * scale;  
+         addy = (extrapointsy[extranexti] - originPointy[i]) * scale;  
+         extrapointsx[extranexti] = originPointx[i] + addx;  
+         extrapointsy[extranexti] = originPointy[i] + addy;  
+           
+    }      
+      
+    var controlPointx=new Array();;
+    var controlPointy=new Array();;  
+    //生成4控制点，产生贝塞尔曲线  
+    for(var i = 0 ;i < originCount ; i++){  
+           controlPointx[0] = originPointx[i];  
+           controlPointy[0] = originPointy[i];
+           var extraindex = 2 * i;  
+           controlPointx[1] = extrapointsx[extraindex + 1];  
+           controlPointy[1] = extrapointsy[extraindex + 1];  
+
+           var extranexti = (extraindex + 2) % (2 * originCount);  
+           controlPointx[2] = extrapointsx[extranexti];                        
+           controlPointy[2] = extrapointsy[extranexti];  
+
+           var nexti = (i + 1) % originCount;  
+           controlPointx[3] = originPointx[nexti];    
+           controlPointy[3] = originPointy[nexti];
+           ppx[iii]=controlPointx[1];
+           ppy[iii]=controlPointy[1];
+    iii=iii+1;
+     ppx[iii]=controlPointx[2];
+           ppy[iii]=controlPointy[2];
+    iii=iii+1;
+    }  
+}  
+
+//  添加某位选手的热度曲线
+function drawLineWithWidth(memberIndex) {
+	var originPointx=[];
+	var originPointy=[];
+	var data = []
+	
+	for (var i=0; i<originDataList.length; i++){
+		var memberData = []
+		var originData = originDataList[i]
+		var dateStr = originData['date']
+		var memberOriginDataList = originData['data']
+		//console.log(originData)
+		var memberOriginData = memberOriginDataList[memberIndex]
+		var x = parseInt(dateStr[2]+dateStr[3])*24+6
+		if (memberOriginData['mentioned']!=0) {
+			var y = 500 - (memberOriginData['power']/memberOriginData['mentioned'])*200	//use max_height - height get y.
+			var width = memberOriginData['mentioned']/100
+			memberData.push(x); memberData.push(y); memberData.push(width);
+			data.push(memberData)
+		}
+	}
+	bubbleSort(data)
+	data = data.slice(0,cutDate)
+	console.log(data)
+	//up points
+	for (var i=0; i<data.length; i++) {
+		originPointx.push(data[i][0]); originPointy.push(data[i][1]-data[i][2]);
+	}
+	//down points
+	for (var i=data.length-1; i>=0; i--){
+		originPointx.push(data[i][0]); originPointy.push(data[i][1]+data[i][2]);
+	}
+	
+	originCount=originPointx.length;
+	createCurve(originCount, originPointx, originPointy);
+	
+	var i1=0;
+	var i2=0;
+	var string="M "+originPointx[0]+" "+originPointy[0]+" ";
+	for (i=0;i<originCount;i++)
+	{
+		string=string+" C "+ppx[i*2]+" "+ppy[i*2]+" "+ppx[i*2+1]+" " +ppy[i*2+1]+" "+originPointx[(i+1) % originCount ]+" "+originPointy[(i+1) % originCount ];
+	}
+
+	console.log(string);
+
+	// console.log("M "+ originPointx[i1]+" "+originPointy[i1++]+" C "+ ppx[i2]+" "+ppy[i2++]+" "+ ppx[i2]+" "+ppy[i2++]+" "+ originPointx[i1]+" "+originPointy[i1++])
+	svg.append("path")
+	// .attr("d","M "+ originPointx[i1]+" "+originPointy[i1++]+" C "+ ppx[i2]+" "+ppy[i2++]+" "+ ppx[i2]+" "+ppy[i2++]+" "+ originPointx[i1]+" "+originPointy[i1++] + )
+	.attr("d",string)
+	.attr("fill","blue")
+	.attr("stroke","blue");
+
+
+	var linear1=d3.scale.linear()
+	.domain( [0,500] )
+	.range(  [0,500] );
+
+	var axis=d3.svg.axis()
+	.scale(linear1)
+	.orient("bottom")
+	.ticks(5);
+
+	svg.append("g")
+	.attr("transform","translate(0,400)")
+	.call(axis);
+}
+drawLineWithWidth(memberName.indexOf('杨超越'))
+</script>  
+	
+</body>  
+</html>  
